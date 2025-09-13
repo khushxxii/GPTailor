@@ -1,6 +1,8 @@
 # ✨ GPTailor
 
-A powerful single-page web application that uses OpenAI GPT-4 to tailor resumes for specific job opportunities with AI precision, helping users optimize their applications.
+A single-page web application that uses OpenAI GPT-4 to tailor resumes for specific job opportunities with AI precision, helping users optimize their applications. 
+
+Have a look now: https://gptailor.netlify.app/
 
 ## ✨ Features
 
