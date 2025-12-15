@@ -1,0 +1,1662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPTailor | Tailor Your Resume</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* Header */
+        .top-header {
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-weight: 600;
+            font-size: 14px;
+            color: #333;
+            text-decoration: none;
+        }
+
+        .header-nav {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+        }
+
+        .header-nav select {
+            border: none;
+            background: transparent;
+            font-size: 14px;
+            color: #666;
+            cursor: pointer;
+            padding: 4px 8px;
+        }
+
+        .header-nav select:hover {
+            color: #333;
+        }
+
+        .re-score-btn {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .re-score-btn:hover {
+            background: #1d4ed8;
+        }
+
+        .secondary-nav {
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 8px 24px;
+            display: flex;
+            gap: 16px;
+        }
+
+        .secondary-nav button {
+            background: transparent;
+            border: none;
+            color: #666;
+            font-size: 13px;
+            padding: 6px 12px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .secondary-nav button:hover {
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        /* Main Layout */
+        .main-layout {
+            display: flex;
+            min-height: calc(100vh - 100px);
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Left Sidebar */
+        .sidebar {
+            width: 280px;
+            min-width: 280px;
+            background: white;
+            border-right: 1px solid #e0e0e0;
+            padding: 24px;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+
+        .score-gauge {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .gauge-circle {
+            width: 180px;
+            height: 180px;
+            margin: 0 auto 16px;
+            position: relative;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: conic-gradient(
+                from 0deg,
+                #ef4444 0deg,
+                #f59e0b 90deg,
+                #eab308 180deg,
+                #84cc16 270deg,
+                #10b981 360deg
+            );
+        }
+
+        .gauge-circle::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 50%;
+            background: conic-gradient(
+                from 0deg,
+                transparent 0deg,
+                transparent calc(var(--score) * 3.6deg),
+                #e5e7eb calc(var(--score) * 3.6deg),
+                #e5e7eb 360deg
+            );
+            mask: radial-gradient(circle at center, transparent 70px, black 70px);
+            -webkit-mask: radial-gradient(circle at center, transparent 70px, black 70px);
+            z-index: 1;
+        }
+
+        .gauge-inner {
+            width: 140px;
+            height: 140px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .score-number {
+            font-size: 36px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .score-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 0;
+            color: #666;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+
+        .nav-item:hover {
+            color: #2563eb;
+        }
+
+        .nav-item svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .section-title {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #666;
+            letter-spacing: 0.5px;
+            margin: 24px 0 12px;
+        }
+
+        .issue-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 0;
+            font-size: 14px;
+            color: #333;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .issue-item:hover {
+            color: #2563eb;
+        }
+
+        .issue-count {
+            background: #ef4444;
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 12px;
+            min-width: 24px;
+            text-align: center;
+        }
+
+        .issue-lock {
+            color: #9ca3af;
+            font-size: 16px;
+        }
+
+        .completed-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 0;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .completed-score {
+            color: #10b981;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .more-btn {
+            background: transparent;
+            border: 1px solid #e0e0e0;
+            color: #666;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 8px;
+            transition: all 0.2s;
+        }
+
+        .more-btn:hover {
+            background: #f5f5f5;
+            border-color: #d0d0d0;
+        }
+
+        .tool-item {
+            padding: 8px 0;
+            font-size: 14px;
+            color: #666;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .tool-item:hover {
+            color: #2563eb;
+        }
+
+        .resources-link {
+            display: block;
+            margin-top: 24px;
+            font-size: 13px;
+            color: #666;
+            text-decoration: none;
+        }
+
+        .resources-link:hover {
+            color: #2563eb;
+        }
+
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            gap: 24px;
+            padding: 24px;
+            min-width: 0;
+        }
+
+        .content-left {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content-right {
+            width: 400px;
+            min-width: 400px;
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            max-height: calc(100vh - 150px);
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+
+        .welcome-section {
+            margin-bottom: 32px;
+        }
+
+        .welcome-nav {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .nav-arrow {
+            background: rgba(0, 0, 0, 0.96);
+            border: 1px solid #e0e0e0;
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            color: white;
+        }
+
+        .nav-arrow:hover {
+            background: rgba(0, 0, 0, 0.8);
+            border-color: #d0d0d0;
+        }
+
+        .how-it-works-btn {
+            background: rgba(0, 0, 0, 1);
+            border: 1px solid #e0e0e0;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: white;
+        }
+
+        .how-it-works-btn:hover {
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        .welcome-text {
+            font-size: 16px;
+            color: #666;
+        }
+
+        .score-section {
+            background: white;
+            border-radius: 8px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .score-heading {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #333;
+        }
+
+        .score-description {
+            color: #666;
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+
+        .score-bar-container {
+            position: relative;
+            height: 40px;
+            background: linear-gradient(to right, #ef4444 0%, #f59e0b 25%, #eab308 50%, #84cc16 75%, #10b981 100%);
+            border-radius: 20px;
+            margin-bottom: 16px;
+            overflow: hidden;
+        }
+
+        .score-bar {
+            position: absolute;
+            top: 50%;
+            left: var(--score-percent);
+            transform: translate(-50%, -50%);
+            width: 4px;
+            height: 60px;
+            background: #7c3aed;
+            z-index: 2;
+        }
+
+        .score-bar::before {
+            content: 'YOUR RESUME';
+            position: absolute;
+            top: -24px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 11px;
+            font-weight: 600;
+            color: #7c3aed;
+            white-space: nowrap;
+        }
+
+        .top-resumes-line {
+            position: absolute;
+            top: 50%;
+            right: 10%;
+            transform: translateY(-50%);
+            width: 2px;
+            height: 60px;
+            border-left: 2px dashed #666;
+            z-index: 1;
+        }
+
+        .top-resumes-line::before {
+            content: 'TOP RESUMES';
+            position: absolute;
+            top: -24px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 11px;
+            font-weight: 600;
+            color: #666;
+            white-space: nowrap;
+        }
+
+        .tip-box {
+            display: flex;
+            gap: 12px;
+            padding: 16px;
+            background: #fef3c7;
+            border-radius: 8px;
+            margin-top: 16px;
+        }
+
+        .tip-icon {
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .tip-text {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .issues-section {
+            background: white;
+            border-radius: 8px;
+            padding: 32px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .issues-heading {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: #333;
+        }
+
+        .issue-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            transition: all 0.2s;
+        }
+
+        .issue-card:hover {
+            border-color: #2563eb;
+            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.1);
+        }
+
+        .issue-info {
+            flex: 1;
+        }
+
+        .issue-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .issue-icon {
+            color: #ef4444;
+            font-size: 20px;
+        }
+
+        .issue-desc {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .fix-btn {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+            white-space: nowrap;
+        }
+
+        .fix-btn:hover {
+            background: #1d4ed8;
+        }
+
+        /* Resume Display */
+        .resume-display {
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .resume-name {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .resume-title {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 16px;
+        }
+
+        .resume-contact {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 24px;
+            line-height: 1.8;
+        }
+
+        .resume-section {
+            margin-bottom: 24px;
+        }
+
+        .resume-section-title {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #333;
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        .resume-item {
+            margin-bottom: 16px;
+        }
+
+        .resume-item-title {
+            font-weight: 600;
+            font-size: 13px;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .resume-item-subtitle {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .resume-item-bullets {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .resume-item-bullets li {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 6px;
+            padding-left: 16px;
+            position: relative;
+        }
+
+        .resume-item-bullets li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: #2563eb;
+        }
+
+        .resume-skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .skill-tag {
+            background: #f5f5f5;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            color: #666;
+        }
+
+        /* Upload Section */
+        .upload-section {
+            background: white;
+            border-radius: 8px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .upload-area {
+            border: 2px dashed #d0d0d0;
+            border-radius: 8px;
+            padding: 40px 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-height: 150px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .upload-area:hover {
+            border-color: #2563eb;
+            background: #f0f7ff;
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            color: #9ca3af;
+        }
+
+        .upload-text {
+            font-size: 16px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .upload-hint {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .hidden-file-input {
+            display: none;
+        }
+
+        .toggle-btn {
+            background: #f5f5f5;
+            border: 1px solid #e0e0e0;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-right: 8px;
+            color: #666;
+        }
+
+        .toggle-btn:hover {
+            background: #e5e5e5;
+        }
+
+        .toggle-btn.active {
+            background: #2563eb;
+            color: white;
+            border-color: #2563eb;
+        }
+
+        #analyzeBtn {
+            border-radius: 10px;
+            background: #9ca3af;
+            color: white;
+            border: none;
+            cursor: not-allowed;
+            transition: all 0.3s ease;
+        }
+
+        #analyzeBtn:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            opacity: 1;
+        }
+
+        #analyzeBtn.ready {
+            background: #2563eb;
+            cursor: pointer;
+        }
+
+        #analyzeBtn.ready:hover:not(:disabled) {
+            background: #1d4ed8;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #2563eb;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 1200px) {
+            .main-content {
+                flex-direction: column;
+            }
+
+            .content-right {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-layout {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid #e0e0e0;
+            }
+
+            .top-header {
+                flex-wrap: wrap;
+            }
+
+            .header-nav {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Header -->
+    <div class="top-header">
+        <a href="#" class="logo">GPTAILOR | TAILOR YOUR RESUME</a>
+        <div class="header-nav">
+            <button class="re-score-btn" onclick="showUpload()">New Analysis</button>
+        </div>
+    </div>
+
+    <!-- Main Layout -->
+    <div class="main-layout">
+        <!-- Left Sidebar -->
+        <div class="sidebar">
+            <div class="score-gauge" id="scoreGaugeContainer" style="display: none;">
+                <div class="gauge-circle low" id="scoreGauge" style="--score: 0">
+                    <div class="gauge-inner">
+                        <div class="score-number" id="scoreNumber">0</div>
+                        <div class="score-label">OVERALL</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-title" id="topFixesTitle" style="display: none;">TOP FIXES</div>
+            <div id="topFixesList">
+                <!-- Will be populated by JavaScript -->
+            </div>
+            <button class="more-btn" id="moreIssuesBtn" onclick="showAllIssues()" style="display: none;">10 MORE ISSUES +</button>
+
+            <div class="section-title" id="completedTitle" style="display: none;">COMPLETED</div>
+            <div id="completedList">
+                <!-- Will be populated by JavaScript -->
+            </div>
+
+            <div class="section-title">TOOLS</div>
+            <div class="tool-item" onclick="rewriteResume()" style="cursor: pointer;">Rewrite My Resume</div>
+            <div class="tool-item" onclick="optimizeATS()" style="cursor: pointer;">Optimize ATS Keywords</div>
+            <div class="tool-item" onclick="addMissingQualifications()" style="cursor: pointer;">Add Missing Qualifications</div>
+            <div class="tool-item" onclick="improveBullets()" style="cursor: pointer;">Improve Bullet Points</div>
+            <div class="tool-item" onclick="addQuantification()" style="cursor: pointer;">Add Quantification</div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="content-left">
+                <!-- Upload Section (shown initially) -->
+                <div class="upload-section" id="uploadSection">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 32px;">
+                        <!-- Resume Upload -->
+                        <div style="display: flex; flex-direction: column;">
+                            <label style="display: block; font-weight: 600; margin-bottom: 12px; font-size: 14px; color: #333;">Your Resume</label>
+                            <div class="upload-area" onclick="document.getElementById('resumeFileInput').click()">
+                                <div class="upload-icon"></div>
+                                <div class="upload-text">Upload Resume</div>
+                                <div class="upload-hint">PDF, DOC, or paste text</div>
+                            </div>
+                            <input type="file" id="resumeFileInput" class="hidden-file-input" accept=".pdf,.doc,.docx" onchange="handleFileUpload('resume', event)">
+                            <textarea id="resumeTextInput" placeholder="Or paste your resume text here..." style="display: none; width: 100%; min-height: 150px; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; margin-top: 12px; font-size: 13px; font-family: inherit; resize: vertical;"></textarea>
+                            <div style="margin-top: 12px; display: flex; gap: 8px;">
+                                <button type="button" class="toggle-btn active" onclick="toggleInputMode('resume', 'file')" id="resumeFileBtn">Upload</button>
+                                <button type="button" class="toggle-btn" onclick="toggleInputMode('resume', 'text')" id="resumeTextBtn">Paste Text</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Job Posting Upload -->
+                        <div style="display: flex; flex-direction: column;">
+                            <label style="display: block; font-weight: 600; margin-bottom: 12px; font-size: 14px; color: #333;">Job Posting</label>
+                            <div class="upload-area" onclick="document.getElementById('jobFileInput').click()">
+                                <div class="upload-icon"></div>
+                                <div class="upload-text">Upload Job Posting</div>
+                                <div class="upload-hint">PDF, DOC, or paste text</div>
+                            </div>
+                            <input type="file" id="jobFileInput" class="hidden-file-input" accept=".pdf,.doc,.docx" onchange="handleFileUpload('job', event)">
+                            <textarea id="jobTextInput" placeholder="Or paste the job description here..." style="display: none; width: 100%; min-height: 150px; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; margin-top: 12px; font-size: 13px; font-family: inherit; resize: vertical;"></textarea>
+                            <div style="margin-top: 12px; display: flex; gap: 8px;">
+                                <button type="button" class="toggle-btn active" onclick="toggleInputMode('job', 'file')" id="jobFileBtn">Upload</button>
+                                <button type="button" class="toggle-btn" onclick="toggleInputMode('job', 'text')" id="jobTextBtn">Paste Text</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 8px;">
+                        <button class="review-btn" onclick="analyzeResume()" id="analyzeBtn" style="padding: 14px 32px; font-size: 16px; min-width: 250px;" disabled>
+                            Analyze & Score Resume
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Results Section (hidden initially) -->
+                <div id="resultsSection" style="display: none;">
+                    <div class="welcome-section">
+                        <div class="welcome-nav">
+                            <button class="nav-arrow">‹</button>
+                            <button class="nav-arrow">›</button>
+                            <button class="how-it-works-btn">HOW IT WORKS</button>
+                        </div>
+                        <div class="welcome-text" id="welcomeText">Good evening, Khushi. Welcome to your resume review.</div>
+                    </div>
+
+                    <div class="score-section">
+                        <h2 class="score-heading" id="scoreHeading">Your resume scored 36 out of 100.</h2>
+                        <p class="score-description" id="scoreDescription">
+                            Your resume has been analyzed against the job posting. The score reflects how well your resume matches the job requirements. With targeted improvements, you can increase your score significantly. We'll guide you through the specific changes needed.
+                        </p>
+                        <div class="score-bar-container">
+                            <div class="score-bar" id="scoreBar" style="--score-percent: 36%"></div>
+                            <div class="top-resumes-line"></div>
+                        </div>
+                        <div class="tip-box">
+                            <div class="tip-icon"></div>
+                            <div class="tip-text">
+                                Use the feedback to find and fix errors in your resume, then reupload it to get a new score. 80% of people increase their score by over 20 points with just three uploads and revisions.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="issues-section">
+                        <h3 class="issues-heading">Here are the key areas where your resume can better match the job posting. Click into each to learn specific improvements you can make.</h3>
+                        <div id="issuesList">
+                            <!-- Will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Loading State -->
+                <div class="loading" id="loadingSection" style="display: none;">
+                    <div class="spinner"></div>
+                    <div>Analyzing your resume against the job posting...</div>
+                </div>
+            </div>
+
+            <!-- Right Sidebar - Resume Display -->
+            <div class="content-right" id="resumeDisplay" style="display: none;">
+                <div class="resume-display" id="resumeContent">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentAnalysis = null;
+        let currentResumeText = '';
+        let currentJobPostingText = '';
+        let inputModes = { resume: 'file', job: 'file' };
+
+        function showUpload() {
+            document.getElementById('uploadSection').style.display = 'block';
+            document.getElementById('resultsSection').style.display = 'none';
+            document.getElementById('resumeDisplay').style.display = 'none';
+            document.getElementById('loadingSection').style.display = 'none';
+            // Hide score sections when returning to upload
+            document.getElementById('scoreGaugeContainer').style.display = 'none';
+            document.getElementById('topFixesTitle').style.display = 'none';
+            document.getElementById('completedTitle').style.display = 'none';
+            document.getElementById('moreIssuesBtn').style.display = 'none';
+            document.getElementById('topFixesList').innerHTML = '';
+            document.getElementById('completedList').innerHTML = '';
+        }
+
+        function toggleInputMode(type, mode) {
+            inputModes[type] = mode;
+            const fileInput = document.getElementById(`${type}FileInput`);
+            const textInput = document.getElementById(`${type}TextInput`);
+            const fileBtn = document.getElementById(`${type}FileBtn`);
+            const textBtn = document.getElementById(`${type}TextBtn`);
+            const container = fileInput.closest('div');
+            const uploadArea = container.querySelector('.upload-area');
+
+            if (mode === 'file') {
+                fileInput.style.display = 'block';
+                textInput.style.display = 'none';
+                if (uploadArea) uploadArea.style.display = 'block';
+                fileBtn.classList.add('active');
+                textBtn.classList.remove('active');
+            } else {
+                fileInput.style.display = 'none';
+                textInput.style.display = 'block';
+                if (uploadArea) uploadArea.style.display = 'none';
+                fileBtn.classList.remove('active');
+                textBtn.classList.add('active');
+            }
+            
+            // Check if inputs are ready after mode change
+            checkInputsReady();
+        }
+
+        async function handleFileUpload(type, event) {
+            const file = event.target.files[0];
+            if (!file) {
+                checkInputsReady();
+                return;
+            }
+
+            // Store file info for later
+            const fileName = file.name;
+            const fileType = file.type;
+            
+            // Show file name
+            const uploadArea = event.target.closest('.upload-section').querySelector('.upload-area');
+            uploadArea.querySelector('.upload-text').textContent = `✓ ${fileName}`;
+            
+            // Check if both inputs are ready
+            checkInputsReady();
+        }
+
+        function getInputValue(type) {
+            if (inputModes[type] === 'text') {
+                return document.getElementById(`${type}TextInput`).value.trim();
+            } else {
+                const fileInput = document.getElementById(`${type}FileInput`);
+                return fileInput.files[0] || null;
+            }
+        }
+
+        function checkInputsReady() {
+            const resumeInput = getInputValue('resume');
+            const jobInput = getInputValue('job');
+            const analyzeBtn = document.getElementById('analyzeBtn');
+            
+            if (resumeInput && jobInput) {
+                analyzeBtn.classList.add('ready');
+                analyzeBtn.disabled = false;
+            } else {
+                analyzeBtn.classList.remove('ready');
+                analyzeBtn.disabled = true;
+            }
+        }
+
+        async function analyzeResume() {
+            const resumeInput = getInputValue('resume');
+            const jobInput = getInputValue('job');
+
+            // Validation
+            if (!resumeInput) {
+                alert('Please provide your resume (upload file or paste text).');
+                return;
+            }
+
+            if (!jobInput) {
+                alert('Please provide the job posting (upload file or paste text).');
+                return;
+            }
+
+            // Disable button during analysis
+            const analyzeBtn = document.getElementById('analyzeBtn');
+            analyzeBtn.disabled = true;
+
+            // Show loading
+            document.getElementById('uploadSection').style.display = 'none';
+            document.getElementById('resultsSection').style.display = 'none';
+            document.getElementById('resumeDisplay').style.display = 'none';
+            document.getElementById('loadingSection').style.display = 'block';
+            document.getElementById('loadingSection').querySelector('div:last-child').textContent = 'Analyzing your resume against the job posting...';
+
+            const formData = new FormData();
+
+            // Add resume
+            if (inputModes.resume === 'file' && resumeInput instanceof File) {
+                formData.append('resume', resumeInput);
+            } else {
+                formData.append('resumeText', resumeInput);
+            }
+
+            // Add job posting
+            if (inputModes.job === 'file' && jobInput instanceof File) {
+                formData.append('jobPosting', jobInput);
+            } else {
+                formData.append('jobPostingText', jobInput);
+            }
+
+            try {
+                const response = await fetch('/api/analyze', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Failed to analyze resume');
+                }
+
+                const data = await response.json();
+                currentAnalysis = data.analysis;
+                currentResumeText = data.resumeText || '';
+                currentJobPostingText = data.jobPostingText || '';
+                displayResults(data);
+            } catch (error) {
+                alert('Error: ' + error.message);
+                showUpload();
+            } finally {
+                // Re-enable button
+                const analyzeBtn = document.getElementById('analyzeBtn');
+                analyzeBtn.disabled = false;
+            }
+        }
+
+        function displayResults(data) {
+            const analysis = data.analysis;
+            const resumeText = data.resumeText || '';
+
+            // Show score gauge
+            document.getElementById('scoreGaugeContainer').style.display = 'block';
+            document.getElementById('topFixesTitle').style.display = 'block';
+            document.getElementById('completedTitle').style.display = 'block';
+            document.getElementById('moreIssuesBtn').style.display = 'block';
+
+            // Update score
+            const score = analysis.score || analysis.overall || 0;
+            document.getElementById('scoreNumber').textContent = score;
+            document.getElementById('scoreGauge').style.setProperty('--score', score);
+            document.getElementById('scoreHeading').textContent = `Your resume scored ${score} out of 100.`;
+            document.getElementById('scoreBar').style.setProperty('--score-percent', score + '%');
+            
+            // Gauge color now automatically matches horizontal bar gradient
+
+            // Update welcome text with user name if available
+            const userName = extractName(resumeText) || 'User';
+            const timeOfDay = getTimeOfDay();
+            document.getElementById('welcomeText').textContent = `Good ${timeOfDay}, ${userName}. Welcome to your resume review.`;
+
+            // Update top fixes
+            const topFixesList = document.getElementById('topFixesList');
+            topFixesList.innerHTML = '';
+            if (analysis.topFixes && analysis.topFixes.length > 0) {
+                analysis.topFixes.slice(0, 5).forEach(fix => {
+                    const item = document.createElement('div');
+                    item.className = 'issue-item';
+                    item.innerHTML = `
+                        <span>${fix.title}</span>
+                        ${fix.premium ? '<span class="issue-lock">🔒</span>' : `<span class="issue-count">${fix.count || ''}</span>`}
+                    `;
+                    topFixesList.appendChild(item);
+                });
+            } else {
+                // Default fixes
+                topFixesList.innerHTML = `
+                    <div class="issue-item"><span>Quantify impact</span><span class="issue-count">4</span></div>
+                    <div class="issue-item"><span>Skills section</span><span class="issue-lock">🔒</span></div>
+                    <div class="issue-item"><span>Weak roles</span><span class="issue-count">3</span></div>
+                    <div class="issue-item"><span>Unnecessary sec...</span><span class="issue-count">5</span></div>
+                    <div class="issue-item"><span>Weak verbs</span><span class="issue-lock">🔒</span></div>
+                `;
+            }
+
+            // Update completed
+            const completedList = document.getElementById('completedList');
+            completedList.innerHTML = '';
+            if (analysis.completed && analysis.completed.length > 0) {
+                analysis.completed.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'completed-item';
+                    div.innerHTML = `
+                        <span>${item.title}</span>
+                        <span class="completed-score">${item.score || 10}</span>
+                    `;
+                    completedList.appendChild(div);
+                });
+            } else {
+                // Default completed
+                completedList.innerHTML = `
+                    <div class="completed-item"><span>Repetition</span><span class="completed-score">10</span></div>
+                    <div class="completed-item"><span>Contact details</span><span class="completed-score">10</span></div>
+                    <div class="completed-item"><span>Use of bullets</span><span class="completed-score">10</span></div>
+                `;
+            }
+
+            // Update issues
+            const issuesList = document.getElementById('issuesList');
+            issuesList.innerHTML = '';
+            if (analysis.issues && analysis.issues.length > 0) {
+                analysis.issues.forEach(issue => {
+                    const card = document.createElement('div');
+                    card.className = 'issue-card';
+                    card.innerHTML = `
+                        <div class="issue-info">
+                            <div class="issue-title">
+                                <span class="issue-icon">✗</span>
+                                ${issue.title}
+                            </div>
+                            <div class="issue-desc">${issue.description}</div>
+                        </div>
+                        <button class="fix-btn" onclick="fixIssue('${issue.category || issue.title}')">${issue.fixButton || 'FIX'} →</button>
+                    `;
+                    issuesList.appendChild(card);
+                });
+            } else {
+                // Default issue
+                const card = document.createElement('div');
+                card.className = 'issue-card';
+                card.innerHTML = `
+                    <div class="issue-info">
+                        <div class="issue-title">
+                            <span class="issue-icon">✗</span>
+                            Quantify impact
+                        </div>
+                        <div class="issue-desc">Add more numbers to quantify your accomplishments.</div>
+                    </div>
+                    <button class="fix-btn" onclick="fixIssue('impact')">IMPACT →</button>
+                `;
+                issuesList.appendChild(card);
+            }
+
+            // Display resume
+            displayResume(resumeText);
+
+            // Show results
+            document.getElementById('uploadSection').style.display = 'none';
+            document.getElementById('loadingSection').style.display = 'none';
+            document.getElementById('resultsSection').style.display = 'block';
+            document.getElementById('resumeDisplay').style.display = 'block';
+        }
+
+        function displayResume(text) {
+            const resumeContent = document.getElementById('resumeContent');
+            
+            // Simple parsing - in production, use a more sophisticated parser
+            const lines = text.split('\n').filter(line => line.trim());
+            
+            let html = '';
+            let currentSection = '';
+            
+            lines.forEach((line, index) => {
+                const trimmed = line.trim();
+                
+                // Detect name (usually first line with title case)
+                if (index === 0 && trimmed.length < 50 && /^[A-Z]/.test(trimmed)) {
+                    html += `<div class="resume-name">${trimmed}</div>`;
+                }
+                // Detect section headers
+                else if (trimmed.length < 30 && /^[A-Z\s&]+$/.test(trimmed)) {
+                    if (currentSection) html += '</div>';
+                    currentSection = trimmed.toLowerCase().replace(/\s+/g, '-');
+                    html += `<div class="resume-section"><div class="resume-section-title">${trimmed}</div>`;
+                }
+                // Detect bullet points
+                else if (trimmed.startsWith('•') || trimmed.startsWith('-') || trimmed.match(/^\d+\./)) {
+                    html += `<ul class="resume-item-bullets"><li>${trimmed.replace(/^[•\-\d+\.]\s*/, '')}</li></ul>`;
+                }
+                // Regular content
+                else if (trimmed) {
+                    html += `<div class="resume-item">${trimmed}</div>`;
+                }
+            });
+            
+            if (currentSection) html += '</div>';
+            
+            resumeContent.innerHTML = html || `<div style="white-space: pre-wrap; font-size: 12px; line-height: 1.6;">${text}</div>`;
+        }
+
+        function extractName(text) {
+            // Simple name extraction - first line that looks like a name
+            const lines = text.split('\n').filter(line => line.trim());
+            if (lines.length > 0) {
+                const firstLine = lines[0].trim();
+                if (firstLine.length < 50 && /^[A-Z][a-z]+/.test(firstLine)) {
+                    return firstLine.split(/\s+/)[0];
+                }
+            }
+            return null;
+        }
+
+        function getTimeOfDay() {
+            const hour = new Date().getHours();
+            if (hour < 12) return 'morning';
+            if (hour < 17) return 'afternoon';
+            return 'evening';
+        }
+
+        async function fixIssue(category) {
+            if (!currentAnalysis) {
+                alert('Please analyze your resume first.');
+                return;
+            }
+
+            // Find the issue by category
+            const issue = currentAnalysis.issues?.find(i => 
+                (i.category && i.category.toLowerCase() === category.toLowerCase()) ||
+                (i.title && i.title.toLowerCase().includes(category.toLowerCase()))
+            );
+
+            if (!issue) {
+                // If not found, create a generic fix guide
+                showFixGuide(category, `Here's how to fix "${category}" issues in your resume:`, 
+                    `To address ${category} issues:\n\n1. Review the job posting requirements related to ${category}\n2. Identify gaps in your resume\n3. Add relevant experience, skills, or achievements\n4. Use keywords from the job posting\n5. Quantify your impact where possible`, null);
+                return;
+            }
+
+            // Special handling for specific issue types
+            const issueTitleLower = issue.title.toLowerCase();
+            if (issueTitleLower.includes('keyword') || issueTitleLower.includes('ats')) {
+                // Use the ATS optimization tool
+                await optimizeATS();
+                return;
+            }
+
+            if (issueTitleLower.includes('qualification') || issueTitleLower.includes('missing qualification')) {
+                // Use the missing qualifications tool
+                await addMissingQualifications();
+                return;
+            }
+
+            // Show loading state
+            const loadingModal = document.createElement('div');
+            loadingModal.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 10000;';
+            loadingModal.innerHTML = `
+                <div style="background: white; padding: 32px; border-radius: 12px; text-align: center;">
+                    <div class="spinner" style="margin: 0 auto 16px;"></div>
+                    <div>Generating detailed fix suggestions...</div>
+                </div>
+            `;
+            document.body.appendChild(loadingModal);
+
+            try {
+                // Call API for detailed fix suggestions
+                const response = await fetch('/api/fix-issue', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        issueTitle: issue.title,
+                        issueDescription: issue.description,
+                        resume: currentResumeText,
+                        jobPosting: currentJobPostingText
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to generate fix suggestions');
+                }
+
+                const fixData = await response.json();
+                loadingModal.remove();
+                showDetailedFixGuide(issue.title, issue.description, fixData);
+            } catch (error) {
+                loadingModal.remove();
+                // Fallback to basic guide if API fails
+                showFixGuide(issue.title, issue.description, 
+                    `Detailed Fix Guide for: ${issue.title}\n\n${issue.description}\n\nTo fix this issue:\n1. Review the specific requirements mentioned in the job posting\n2. Identify where you can add relevant experience or skills\n3. Update your resume with concrete examples\n4. Use action verbs and quantify achievements where possible`, null);
+            }
+        }
+
+        function showFixGuide(title, description, detailedGuide, fixData) {
+            const modal = document.createElement('div');
+            modal.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 10000;';
+            modal.innerHTML = `
+                <div style="background: white; padding: 32px; border-radius: 12px; max-width: 700px; max-height: 80vh; overflow-y: auto; box-shadow: 0 20px 40px rgba(0,0,0,0.2);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                        <h2 style="margin: 0; font-size: 24px; font-weight: 600;">Fix Guide: ${title}</h2>
+                        <button onclick="this.closest('div[style*=\"position: fixed\"]').remove()" style="background: transparent; border: none; font-size: 24px; cursor: pointer; color: #666;">×</button>
+                    </div>
+                    <div style="margin-bottom: 24px;">
+                        <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 12px;">Issue Description:</h3>
+                        <div style="background: #f5f5f5; padding: 16px; border-radius: 8px; font-size: 14px; line-height: 1.6;">${description}</div>
+                    </div>
+                    <div>
+                        <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 12px;">How to Fix:</h3>
+                        <div style="background: #f0f7ff; padding: 16px; border-radius: 8px; white-space: pre-wrap; font-size: 14px; line-height: 1.6;">${detailedGuide}</div>
+                    </div>
+                    <button onclick="this.closest('div[style*=\"position: fixed\"]').remove()" style="margin-top: 24px; width: 100%; padding: 12px; background: #2563eb; color: white; border: none; border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer;">Close</button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function showDetailedFixGuide(title, description, fixData) {
+            const modal = document.createElement('div');
+            modal.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 10000;';
+            
+            let content = `
+                <div style="background: white; padding: 32px; border-radius: 12px; max-width: 800px; max-height: 80vh; overflow-y: auto; box-shadow: 0 20px 40px rgba(0,0,0,0.2);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                        <h2 style="margin: 0; font-size: 24px; font-weight: 600;">Fix Guide: ${title}</h2>
+                        <button onclick="this.closest('div[style*=\"position: fixed\"]').remove()" style="background: transparent; border: none; font-size: 24px; cursor: pointer; color: #666;">×</button>
+                    </div>
+                    <div style="margin-bottom: 24px;">
+                        <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 12px;">Issue Description:</h3>
+                        <div style="background: #f5f5f5; padding: 16px; border-radius: 8px; font-size: 14px; line-height: 1.6;">${description}</div>
+                    </div>
+            `;
+
+            // Step-by-step guide
+            if (fixData.stepByStepGuide && fixData.stepByStepGuide.length > 0) {
+                content += `
+                    <div style="margin-bottom: 24px;">
+                        <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 12px;">Step-by-Step Guide:</h3>
+                        <ol style="padding-left: 20px; line-height: 1.8;">
+                            ${fixData.stepByStepGuide.map(step => `<li style="margin-bottom: 8px; font-size: 14px;">${step}</li>`).join('')}
+                        </ol>
+                    </div>
+                `;
+            }
+
+            // Before/After examples
+            if (fixData.beforeAfterExamples && fixData.beforeAfterExamples.length > 0) {
+                content += `
+                    <div style="margin-bottom: 24px;">
+                        <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 12px;">Before & After Examples:</h3>
+                        ${fixData.beforeAfterExamples.map(example => `
+                            <div style="margin-bottom: 16px; padding: 16px; background: #f9fafb; border-radius: 8px; border-left: 4px solid #ef4444;">
+                                <div style="margin-bottom: 8px;">
+                                    <strong style="color: #ef4444; font-size: 13px;">BEFORE:</strong>
+                                    <div style="font-size: 13px; color: #666; margin-top: 4px;">${example.before}</div>
+                                </div>
+                                <div>
+                                    <strong style="color: #10b981; font-size: 13px;">AFTER:</strong>
+                                    <div style="font-size: 13px; color: #333; margin-top: 4px; font-weight: 500;">${example.after}</div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            // Specific examples
+            if (fixData.specificExamples && fixData.specificExamples.length > 0) {
+                content += `
+                    <div style="margin-bottom: 24px;">
+                        <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 12px;">Specific Examples:</h3>
+                        <ul style="padding-left: 20px; line-height: 1.8;">
+                            ${fixData.specificExamples.map(example => `<li style="margin-bottom: 8px; font-size: 14px;">${example}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+
+            // Keywords to add
+            if (fixData.keywordsToAdd && fixData.keywordsToAdd.length > 0) {
+                content += `
+                    <div style="margin-bottom: 24px;">
+                        <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 12px;">Keywords to Add:</h3>
+                        <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                            ${fixData.keywordsToAdd.map(keyword => `
+                                <span style="background: #2563eb; color: white; padding: 6px 12px; border-radius: 6px; font-size: 13px; font-weight: 500;">${keyword}</span>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Tips
+            if (fixData.tips) {
+                content += `
+                    <div style="margin-bottom: 24px;">
+                        <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 12px;">Additional Tips:</h3>
+                        <div style="background: #fef3c7; padding: 16px; border-radius: 8px; font-size: 14px; line-height: 1.6; border-left: 4px solid #f59e0b;">
+                            ${fixData.tips}
+                        </div>
+                    </div>
+                `;
+            }
+
+            content += `
+                    <button onclick="this.closest('div[style*=\"position: fixed\"]').remove()" style="margin-top: 24px; width: 100%; padding: 12px; background: #2563eb; color: white; border: none; border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer;">Close</button>
+                </div>
+            `;
+
+            modal.innerHTML = content;
+            document.body.appendChild(modal);
+        }
+
+        function showAllIssues() {
+            if (!currentAnalysis || !currentAnalysis.issues) {
+                alert('Please analyze your resume first.');
+                return;
+            }
+
+            const modal = document.createElement('div');
+            modal.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 10000;';
+            
+            const issuesHtml = currentAnalysis.issues.map((issue, index) => `
+                <div style="padding: 16px; border: 1px solid #e0e0e0; border-radius: 8px; margin-bottom: 12px;">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
+                        <h4 style="margin: 0; font-size: 16px; font-weight: 600; color: #333;">${index + 1}. ${issue.title}</h4>
+                        <button onclick="fixIssue('${issue.category || issue.title}'); this.closest('div[style*=\"position: fixed\"]').remove();" style="background: #2563eb; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 12px; cursor: pointer;">Fix →</button>
+                    </div>
+                    <p style="margin: 0; font-size: 14px; color: #666; line-height: 1.5;">${issue.description}</p>
+                </div>
+            `).join('');
+
+            modal.innerHTML = `
+                <div style="background: white; padding: 32px; border-radius: 12px; max-width: 800px; max-height: 80vh; overflow-y: auto; box-shadow: 0 20px 40px rgba(0,0,0,0.2);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                        <h2 style="margin: 0; font-size: 24px; font-weight: 600;">All Issues (${currentAnalysis.issues.length})</h2>
+                        <button onclick="this.closest('div[style*=\"position: fixed\"]').remove()" style="background: transparent; border: none; font-size: 24px; cursor: pointer; color: #666;">×</button>
+                    </div>
+                    <div>
+                        ${issuesHtml}
+                    </div>
+                    <button onclick="this.closest('div[style*=\"position: fixed\"]').remove()" style="margin-top: 24px; width: 100%; padding: 12px; background: #2563eb; color: white; border: none; border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer;">Close</button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function rewriteResume() {
+            if (!currentAnalysis) {
+                alert('Please analyze your resume first.');
+                return;
+            }
+            alert('Resume Rewriter - This feature would use AI to rewrite your resume based on the job posting requirements.');
+        }
+
+        async function optimizeATS() {
+            if (!currentAnalysis || !currentResumeText || !currentJobPostingText) {
+                alert('Please analyze your resume first.');
+                return;
+            }
+
+            // Show loading
+            const loadingDiv = document.createElement('div');
+            loadingDiv.id = 'atsLoading';
+            loadingDiv.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 10000;';
+            loadingDiv.innerHTML = '<div style="background: white; padding: 24px; border-radius: 8px;"><div class="spinner"></div><div>Analyzing missing ATS keywords...</div></div>';
+            document.body.appendChild(loadingDiv);
+
+            try {
+                const response = await fetch('/api/optimize-ats', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        resume: currentResumeText,
+                        jobPosting: currentJobPostingText
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to optimize ATS keywords');
+                }
+
+                const data = await response.json();
+                loadingDiv.remove();
+                
+                // Show results in a modal
+                showToolResults('ATS Keywords Optimization', data.keywords, data.suggestions);
+            } catch (error) {
+                loadingDiv.remove();
+                alert('Error: ' + error.message);
+            }
+        }
+
+        async function addMissingQualifications() {
+            if (!currentAnalysis || !currentResumeText || !currentJobPostingText) {
+                alert('Please analyze your resume first.');
+                return;
+            }
+
+            // Show loading
+            const loadingDiv = document.createElement('div');
+            loadingDiv.id = 'qualLoading';
+            loadingDiv.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 10000;';
+            loadingDiv.innerHTML = '<div style="background: white; padding: 24px; border-radius: 8px;"><div class="spinner"></div><div>Analyzing missing qualifications...</div></div>';
+            document.body.appendChild(loadingDiv);
+
+            try {
+                const response = await fetch('/api/missing-qualifications', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        resume: currentResumeText,
+                        jobPosting: currentJobPostingText
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to analyze missing qualifications');
+                }
+
+                const data = await response.json();
+                loadingDiv.remove();
+                
+                // Show results in a modal
+                showToolResults('Missing Qualifications', data.qualifications, data.suggestions);
+            } catch (error) {
+                loadingDiv.remove();
+                alert('Error: ' + error.message);
+            }
+        }
+
+        function showToolResults(title, items, suggestions) {
+            const modal = document.createElement('div');
+            modal.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 10000;';
+            modal.innerHTML = `
+                <div style="background: white; padding: 32px; border-radius: 12px; max-width: 600px; max-height: 80vh; overflow-y: auto; box-shadow: 0 20px 40px rgba(0,0,0,0.2);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                        <h2 style="margin: 0; font-size: 24px; font-weight: 600;">${title}</h2>
+                        <button onclick="this.closest('div[style*=\"position: fixed\"]').remove()" style="background: transparent; border: none; font-size: 24px; cursor: pointer; color: #666;">×</button>
+                    </div>
+                    <div style="margin-bottom: 24px;">
+                        <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 12px;">Missing Items:</h3>
+                        <ul style="list-style: none; padding: 0;">
+                            ${items.map(item => `<li style="padding: 8px 0; border-bottom: 1px solid #e0e0e0;">• ${item}</li>`).join('')}
+                        </ul>
+                    </div>
+                    ${suggestions ? `
+                    <div>
+                        <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 12px;">Suggestions:</h3>
+                        <div style="background: #f5f5f5; padding: 16px; border-radius: 8px; white-space: pre-wrap; font-size: 14px; line-height: 1.6;">${suggestions}</div>
+                    </div>
+                    ` : ''}
+                    <button onclick="this.closest('div[style*=\"position: fixed\"]').remove()" style="margin-top: 24px; width: 100%; padding: 12px; background: #2563eb; color: white; border: none; border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer;">Close</button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function improveBullets() {
+            if (!currentAnalysis) {
+                alert('Please analyze your resume first.');
+                return;
+            }
+            alert('Bullet Point Improver - This feature would enhance your bullet points to better match the job requirements.');
+        }
+
+        function addQuantification() {
+            if (!currentAnalysis) {
+                alert('Please analyze your resume first.');
+                return;
+            }
+            alert('Quantification Helper - This feature would suggest where to add numbers and metrics to strengthen your resume.');
+        }
+
+        // Setup drag and drop and input listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            // Add event listeners for text inputs
+            document.getElementById('resumeTextInput').addEventListener('input', checkInputsReady);
+            document.getElementById('jobTextInput').addEventListener('input', checkInputsReady);
+            
+            // Add event listeners for file inputs
+            document.getElementById('resumeFileInput').addEventListener('change', () => checkInputsReady());
+            document.getElementById('jobFileInput').addEventListener('change', () => checkInputsReady());
+            
+            // Initial check
+            checkInputsReady();
+            
+            const uploadAreas = document.querySelectorAll('.upload-area');
+            
+            uploadAreas.forEach((uploadArea, index) => {
+                const type = index === 0 ? 'resume' : 'job';
+                const fileInput = document.getElementById(`${type}FileInput`);
+                
+                uploadArea.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    uploadArea.style.borderColor = '#2563eb';
+                    uploadArea.style.background = '#f0f7ff';
+                });
+                
+                uploadArea.addEventListener('dragleave', (e) => {
+                    e.preventDefault();
+                    uploadArea.style.borderColor = '#d0d0d0';
+                    uploadArea.style.background = 'white';
+                });
+                
+                uploadArea.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    uploadArea.style.borderColor = '#d0d0d0';
+                    uploadArea.style.background = 'white';
+                    
+                    const files = e.dataTransfer.files;
+                    if (files.length > 0) {
+                        fileInput.files = files;
+                        handleFileUpload(type, { target: fileInput });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+

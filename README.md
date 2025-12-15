@@ -1,136 +1,224 @@
-# ✨ GPTailor
+# ✨ GPTailor - AI Resume Review & Scoring
 
-A powerful single-page web application that uses OpenAI GPT-4 to tailor resumes for specific job opportunities with AI precision, helping users optimize their applications.
+A powerful web application that uses OpenAI GPT-4 to review and score resumes, providing detailed feedback similar to professional resume review services. Get instant AI-powered analysis with actionable suggestions to improve your resume.
 
 ## ✨ Features
 
+### 📊 Resume Scoring
+- **Overall Score**: Get a score from 0-100 based on multiple criteria
+- **Visual Score Gauge**: Circular progress indicator showing your resume's performance
+- **Score Breakdown**: See how your resume compares to top resumes
+
+### 🔍 Comprehensive Analysis
+- **Top Fixes**: Prioritized list of issues to address
+- **Completed Items**: Areas where your resume excels
+- **Detailed Issues**: Specific problems with actionable fix suggestions
+- **Category-based Feedback**: Organized by impact, skills, formatting, etc.
+
 ### 📄 Multiple Input Methods
-- **Text Input**: Paste job postings and resumes directly into text areas
-- **PDF Upload**: Upload PDF files for both job postings and resumes with automatic text extraction
-- **Drag & Drop**: Simply drag PDF files onto the upload areas
+- **PDF Upload**: Upload your resume PDF directly
+- **Drag & Drop**: Simply drag PDF files onto the upload area
+- **Automatic Text Extraction**: PDFs are automatically processed
 
-### 🤖 AI-Powered Analysis
-- Uses OpenAI GPT-4 for intelligent resume-job matching
-- Provides comprehensive analysis including:
-  - Match summary and compatibility score
-  - Missing keywords and skills identification
-  - Specific suggestions for resume tailoring
-  - Optional rewritten bullet points for better alignment
+### 🎨 Professional UI
+- **Resume Worded-style Design**: Clean, professional interface
+- **Side-by-side Layout**: View your resume and feedback simultaneously
+- **Responsive Design**: Works on desktop, tablet, and mobile devices
+- **Real-time Updates**: See your score and feedback instantly
 
-### 📊 User Analytics
-- Real-time user count tracking using CountAPI
-- Displays total number of users in the footer
+## 🚀 Quick Start
 
-### 🎨 Modern UI/UX
-- Clean, responsive design that works on all devices
-- Beautiful gradient background with card-based layout
-- Smooth animations and hover effects
-- Mobile-friendly interface
-- Loading states and error handling
+### Prerequisites
+- Node.js (v14 or higher)
+- npm or yarn
+- OpenAI API key
 
-## 🚀 How to Use
+### Installation
 
-1. **Open the App**: Open `index.html` in any modern web browser
+1. **Clone or download this repository**
 
-2. **Add Your API Key**: Enter your OpenAI API key in the password field at the top
+2. **Install dependencies**:
+```bash
+npm install
+```
 
-3. **Input Job Posting**: Choose one of two methods:
-   - Click "Paste Text" and paste the job description
-   - Click "Upload PDF" and upload a PDF file of the job posting
+3. **Set up environment variables**:
+```bash
+cp env.example .env
+```
 
-4. **Input Your Resume**: Choose one of two methods:
-   - Click "Paste Text" and paste your resume content
-   - Click "Upload PDF" and upload your resume PDF
+4. **Edit `.env` file** and add your OpenAI API key:
+```env
+OPENAI_API_KEY=sk-your-openai-api-key-here
+OPENAI_MODEL=gpt-4
+PORT=3000
+```
 
-5. **Get Analysis**: Click "Review Match" to receive AI-powered insights
+5. **Start the server**:
+```bash
+npm start
+```
 
-6. **Review Results**: Read the comprehensive analysis and suggestions
+6. **Open your browser** and navigate to:
+```
+http://localhost:3000
+```
+
+### Development Mode
+
+For development with auto-reload:
+```bash
+npm run dev
+```
+
+(Requires `nodemon` - install globally with `npm install -g nodemon` or it will use the local version)
+
+## 📖 How to Use
+
+1. **Upload Your Resume**: 
+   - Click the upload area or drag & drop your PDF resume
+   - The system will automatically extract text from your PDF
+
+2. **Wait for Analysis**:
+   - The AI will analyze your resume (takes 10-30 seconds)
+   - You'll see a loading indicator during processing
+
+3. **Review Your Score**:
+   - Check your overall score (0-100) in the circular gauge
+   - See where you stand compared to top resumes
+
+4. **Review Feedback**:
+   - **Top Fixes**: Most important issues to address first
+   - **Completed**: Areas you're doing well in
+   - **Issues**: Detailed problems with fix suggestions
+
+5. **Make Improvements**:
+   - Click "FIX →" buttons to see detailed suggestions
+   - Update your resume based on feedback
+   - Re-upload to get a new score
+
+6. **Re-score**:
+   - Click "Re-score Resume" button to upload an updated version
+   - Track your improvement over time
 
 ## 🔧 Technical Details
 
+### Architecture
+- **Backend**: Node.js with Express
+- **Frontend**: Vanilla JavaScript (no framework required)
+- **AI**: OpenAI GPT-4 for resume analysis
+- **PDF Processing**: pdf-parse library for text extraction
+
+### API Endpoints
+
+- `GET /` - Serve the main application
+- `POST /api/analyze` - Analyze uploaded resume
+  - Accepts: PDF file or text in request body
+  - Returns: Analysis with score, issues, and feedback
+- `GET /api/health` - Health check endpoint
+
 ### Dependencies
-- **PDF.js**: For client-side PDF text extraction
-- **OpenAI API**: For AI-powered resume analysis
-- **CountAPI**: For user count tracking
-
-### Browser Support
-- Modern browsers with ES6+ support
-- Chrome, Firefox, Safari, Edge (latest versions)
-
-### Security Notes
-- This is a demo application - API keys are handled client-side
-- No data is stored or transmitted to external servers (except OpenAI and CountAPI)
-- For production use, implement server-side API key management
+- **express**: Web server framework
+- **cors**: Cross-origin resource sharing
+- **multer**: File upload handling
+- **pdf-parse**: PDF text extraction
+- **openai**: OpenAI API client
+- **dotenv**: Environment variable management
 
 ## 📋 API Requirements
 
 ### OpenAI API Key
 You'll need an OpenAI API key with access to GPT-4:
 1. Sign up at [OpenAI](https://platform.openai.com/)
-2. Generate an API key
+2. Generate an API key from the dashboard
 3. Ensure you have credits/usage allowance
+4. Add the key to your `.env` file
 
 ### Usage Costs
-- Each analysis uses approximately 1000-2000 tokens
-- Cost varies based on OpenAI's current pricing
+- Each analysis uses approximately 1500-2500 tokens
+- Cost varies based on OpenAI's current pricing (GPT-4)
 - Monitor your usage in the OpenAI dashboard
+- Consider using GPT-3.5-turbo for lower costs (change `OPENAI_MODEL` in `.env`)
 
-## 🛠️ Features Breakdown
+## 🎯 Scoring Criteria
 
-### Toggle Input Modes
-- Switch between text input and file upload seamlessly
-- Visual indicators show which mode is active
-- Both modes provide the same analysis quality
+The AI evaluates resumes based on:
 
-### PDF Text Extraction
-- Supports multi-page PDFs
-- Preserves text formatting and structure
-- Shows extraction progress and success/error states
-- Handles various PDF formats and layouts
+- **Content Quality (40%)**: Relevance, clarity, and impact of descriptions
+- **Formatting & Structure (20%)**: Organization, readability, and professional appearance
+- **ATS Optimization (20%)**: Keyword usage and compatibility with applicant tracking systems
+- **Quantified Achievements (20%)**: Use of metrics, numbers, and measurable results
 
-### Error Handling
-- Comprehensive validation for all inputs
-- Clear error messages for missing data
-- Network error handling for API calls
-- PDF extraction error recovery
+## 🛠️ Configuration
 
-### Responsive Design
-- Desktop: Side-by-side layout for job posting and resume
-- Mobile: Stacked layout with touch-friendly controls
-- Tablet: Optimized spacing and button sizes
+### Environment Variables
 
-## 🎯 Use Cases
+See `env.example` for all available options:
 
-### Job Seekers
-- Optimize resumes for specific job applications
-- Identify missing skills and keywords
-- Get suggestions for better bullet points
-- Improve application success rates
+- `OPENAI_API_KEY` (required): Your OpenAI API key
+- `OPENAI_MODEL` (optional): Model to use (default: `gpt-4`)
+- `PORT` (optional): Server port (default: `3000`)
+- `CONTEXT7_API_KEY` (optional): For context management features
+- `PERPLEXITY_API_KEY` (optional): For research features
 
-### Career Counselors
-- Help clients improve their resumes
-- Provide data-driven feedback
-- Compare multiple job opportunities
-- Track improvement over time
+## 🎨 Customization
 
-### Recruiters
-- Quickly assess candidate fit
-- Identify key gaps in applications
-- Provide feedback to candidates
-- Streamline screening processes
+### Changing the Design
+- Edit `public/index.html` for layout and styling
+- All styles are in the `<style>` section
+- Modify colors, fonts, and layout as needed
+
+### Adjusting Analysis
+- Edit the prompt in `server.js` (`analyzeResume` function)
+- Modify scoring criteria and feedback structure
+- Add custom analysis categories
+
+## 🔒 Security Notes
+
+- **API Keys**: Never commit `.env` file to version control
+- **File Uploads**: PDFs are processed in memory and not stored
+- **CORS**: Configure CORS settings in `server.js` for production
+- **Rate Limiting**: Consider adding rate limiting for production use
+
+## 📱 Browser Support
+
+- Chrome (latest)
+- Firefox (latest)
+- Safari (latest)
+- Edge (latest)
+
+## 🐛 Troubleshooting
+
+### Server won't start
+- Check that Node.js is installed: `node --version`
+- Verify dependencies are installed: `npm install`
+- Check that port 3000 is available
+
+### Analysis fails
+- Verify your OpenAI API key is correct in `.env`
+- Check you have sufficient API credits
+- Ensure the PDF is not corrupted or password-protected
+- Check server logs for detailed error messages
+
+### PDF upload issues
+- Ensure file is a valid PDF
+- Check file size (max 10MB)
+- Try a different PDF if extraction fails
 
 ## 🔄 Future Enhancements
 
-- [ ] Support for multiple resume formats (Word, text files)
-- [ ] Batch processing for multiple job applications
-- [ ] Resume scoring and ranking system
+- [ ] Support for Word documents (.docx)
+- [ ] Resume comparison over time
+- [ ] Export feedback as PDF
 - [ ] Integration with job boards
-- [ ] User accounts and history tracking
-- [ ] Advanced analytics and reporting
+- [ ] User accounts and history
+- [ ] Advanced ATS keyword analysis
+- [ ] Industry-specific scoring
+- [ ] Resume templates
 
 ## 🤝 Contributing
 
-This is a demo application, but suggestions and improvements are welcome:
+Suggestions and improvements are welcome:
 1. Fork the repository
 2. Make your changes
 3. Test thoroughly
@@ -145,4 +233,12 @@ This project is provided as-is for demonstration purposes. Feel free to use and 
 - GPTailor provides AI-generated suggestions and should not be the sole basis for career decisions
 - Always review and customize AI suggestions to match your personal experience and goals
 - Ensure compliance with privacy laws when handling personal resume data
-- OpenAI API usage is subject to their terms of service and pricing 
+- OpenAI API usage is subject to their terms of service and pricing
+- Scores are estimates based on AI analysis and may not reflect actual recruiter opinions
+
+## 📞 Support
+
+For issues or questions:
+- Check the troubleshooting section
+- Review server logs for errors
+- Ensure all dependencies are installed correctly
