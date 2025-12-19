@@ -603,12 +603,18 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(` Server running on http://0.0.0.0:${PORT}`);
-  if (process.env.OPENAI_API_KEY) {
-    console.log(`✅ OpenAI API key is configured`);
-  } else {
-    console.log(`⚠️  WARNING: OPENAI_API_KEY is not set in your .env file`);
-  }
-});
+// Export for Vercel serverless functions
+module.exports = app;
+
+// Only listen if not in serverless environment
+if (require.main === module) {
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(` Server running on http://0.0.0.0:${PORT}`);
+    if (process.env.OPENAI_API_KEY) {
+      console.log(`✅ OpenAI API key is configured`);
+    } else {
+      console.log(`⚠️  WARNING: OPENAI_API_KEY is not set in your .env file`);
+    }
+  });
+}
 
