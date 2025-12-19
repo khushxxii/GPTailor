@@ -11,20 +11,45 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Determine the correct base directory for serverless vs local
+const isServerless = process.env.AWS_LAMBDA_FUNCTION_NAME || process.env.NETLIFY;
+let baseDir;
+
+if (isServerless) {
+  // In Netlify serverless, public folder is copied to netlify/functions/public during build
+  // Try function directory first (where build script copies it), then fallback locations
+  const possiblePaths = [
+    path.join(__dirname, 'public'),           // Function directory (copied by build script)
+    path.join(__dirname, '..', 'public'),     // Parent directory
+    path.join(process.cwd(), 'public'),       // Working directory
+  ];
+  
+  baseDir = path.join(__dirname, 'public'); // Default
+  for (const possiblePath of possiblePaths) {
+    if (fs.existsSync(possiblePath) && fs.existsSync(path.join(possiblePath, 'landing.html'))) {
+      baseDir = possiblePath;
+      break;
+    }
+  }
+} else {
+  // Local development
+  baseDir = path.join(__dirname, 'public');
+}
+
 // Middleware
 app.use(cors());
 app.use(express.json());
 
 // Routes - must be before static to override default index.html
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'landing.html'));
+  res.sendFile(path.join(baseDir, 'landing.html'));
 });
 
 app.get('/tailor', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  res.sendFile(path.join(baseDir, 'index.html'));
 });
 
-app.use(express.static(path.join(__dirname, 'public'), { index: false }));
+app.use(express.static(baseDir, { index: false }));
 
 // Validate OpenAI API Key
 if (!process.env.OPENAI_API_KEY) {
@@ -558,7 +583,10 @@ app.post('/api/request-feature', async (req, res) => {
 });
 
 // Resume counter functions
-const COUNTER_FILE = path.join(__dirname, 'resume_counter.json');
+// In serverless, use /tmp for writable files, otherwise use project root
+const COUNTER_FILE = isServerless 
+  ? path.join('/tmp', 'resume_counter.json')
+  : path.join(__dirname, 'resume_counter.json');
 
 function getResumeCount() {
   try {
