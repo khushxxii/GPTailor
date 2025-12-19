@@ -16,19 +16,40 @@ const isServerless = process.env.AWS_LAMBDA_FUNCTION_NAME || process.env.NETLIFY
 let baseDir;
 
 if (isServerless) {
-  // In Netlify serverless, public folder is copied to netlify/functions/public during build
-  // Try function directory first (where build script copies it), then fallback locations
-  const possiblePaths = [
-    path.join(__dirname, 'public'),           // Function directory (copied by build script)
-    path.join(__dirname, '..', 'public'),     // Parent directory
-    path.join(process.cwd(), 'public'),       // Working directory
-  ];
-  
-  baseDir = path.join(__dirname, 'public'); // Default
-  for (const possiblePath of possiblePaths) {
-    if (fs.existsSync(possiblePath) && fs.existsSync(path.join(possiblePath, 'landing.html'))) {
-      baseDir = possiblePath;
-      break;
+  // Check if PUBLIC_DIR was set by the function wrapper
+  if (process.env.PUBLIC_DIR && fs.existsSync(process.env.PUBLIC_DIR)) {
+    baseDir = process.env.PUBLIC_DIR;
+  } else {
+    // In Netlify serverless, try multiple possible locations
+    const possiblePaths = [
+      path.join(__dirname, 'public'),                    // Root public folder
+      path.join(__dirname, 'netlify', 'functions', 'public'), // Copied by build script
+      path.join(__dirname, '..', 'public'),              // Parent directory
+      path.join(__dirname, '..', '..', 'public'),        // Two levels up
+      path.join(process.cwd(), 'public'),                 // Working directory
+      '/var/task/public',                                 // Netlify Lambda default
+      '/var/task/src/public',                             // Netlify Lambda with src (common)
+      '/var/task/netlify/functions/public',               // Netlify Lambda function path
+    ];
+    
+    baseDir = path.join(__dirname, 'public'); // Default fallback
+    let found = false;
+    
+    for (const possiblePath of possiblePaths) {
+      const landingPath = path.join(possiblePath, 'landing.html');
+      if (fs.existsSync(possiblePath) && fs.existsSync(landingPath)) {
+        baseDir = possiblePath;
+        found = true;
+        console.log(`✅ Found public directory at: ${baseDir}`);
+        break;
+      }
+    }
+    
+    if (!found) {
+      console.error('❌ Could not find public directory. Tried paths:');
+      possiblePaths.forEach(p => console.error(`   - ${p}`));
+      console.error(`   __dirname: ${__dirname}`);
+      console.error(`   process.cwd(): ${process.cwd()}`);
     }
   }
 } else {
