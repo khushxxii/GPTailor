@@ -1,5 +1,5 @@
 [build]
-  command = "npm install && node build-netlify.js"
+  command = "npm run build"
   functions = "netlify/functions"
 
 [build.environment]
