@@ -1,7 +1,7 @@
 [build]
   command = "npm run build"
   functions = "netlify/functions"
-  publish = ".netlify/functions"  # Override UI setting - functions don't need publish dir
+  publish = "public"  # Static assets directory
 
 [build.environment]
   NODE_VERSION = "18"
