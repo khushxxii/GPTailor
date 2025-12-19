@@ -17,14 +17,14 @@ app.use(express.json());
 
 // Routes - must be before static to override default index.html
 app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/public/landing.html');
+  res.sendFile(path.join(__dirname, 'public', 'landing.html'));
 });
 
 app.get('/tailor', (req, res) => {
-  res.sendFile(__dirname + '/public/index.html');
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-app.use(express.static('public', { index: false }));
+app.use(express.static(path.join(__dirname, 'public'), { index: false }));
 
 // Validate OpenAI API Key
 if (!process.env.OPENAI_API_KEY) {
@@ -603,8 +603,8 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-app.listen(PORT, () => {
-  console.log(` Server running on http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(` Server running on http://0.0.0.0:${PORT}`);
   if (process.env.OPENAI_API_KEY) {
     console.log(`✅ OpenAI API key is configured`);
   } else {
