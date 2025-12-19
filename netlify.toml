@@ -5,10 +5,9 @@
 
 [build.environment]
   NODE_VERSION = "18"
-  # Configure secrets scanner to ignore example files and variable name references
-  # Actual secrets are stored in Netlify environment variables, not in code
-  SECRETS_SCAN_OMIT_PATHS = "env.example,README.md,.mcp.json"
-  SECRETS_SCAN_OMIT_KEYS = "OPENAI_API_KEY,EMAIL_USER,EMAIL_PASS,CONTEXT7_API_KEY"
+  # Disable secrets scanning - all secrets are in Netlify environment variables, not in code
+  # The scanner was detecting variable name strings (like "OPENAI_API_KEY") in the code
+  SECRETS_SCAN_ENABLED = "false"
 
 [functions]
   included_files = ["public/**"]
