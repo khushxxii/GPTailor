@@ -19,6 +19,9 @@
             background: #f5f5f5;
             color: #333;
             line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
 
         /* Header */
@@ -36,6 +39,14 @@
             font-size: 14px;
             color: #333;
             text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo img {
+            height: 32px;
+            width: auto;
         }
 
         .header-nav {
@@ -100,9 +111,10 @@
         /* Main Layout */
         .main-layout {
             display: flex;
-            min-height: calc(100vh - 100px);
+            flex: 1;
             max-width: 1400px;
             margin: 0 auto;
+            width: 100%;
         }
 
         /* Left Sidebar */
@@ -285,10 +297,26 @@
             color: #666;
             cursor: pointer;
             transition: color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
         .tool-item:hover {
             color: #2563eb;
+        }
+
+        .tool-item-soon {
+            font-size: 10px;
+            color: #9ca3af;
+            background: #f3f4f6;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-left: 8px;
+            pointer-events: none;
         }
 
         .resources-link {
@@ -301,6 +329,65 @@
 
         .resources-link:hover {
             color: #2563eb;
+        }
+
+        /* Promotional Content Styles */
+        .promo-stat {
+            text-align: center;
+            padding: 24px;
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            border-radius: 12px;
+            margin-bottom: 24px;
+            color: white;
+        }
+
+        .promo-stat-number {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .promo-stat-label {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .promo-feature {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 16px;
+            background: #f9fafb;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            transition: all 0.2s;
+        }
+
+        .promo-feature:hover {
+            background: #f0f7ff;
+            transform: translateX(4px);
+        }
+
+        .promo-feature-icon {
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .promo-feature-text {
+            flex: 1;
+        }
+
+        .promo-feature-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .promo-feature-desc {
+            font-size: 12px;
+            color: #666;
+            line-height: 1.4;
         }
 
 
@@ -363,7 +450,7 @@
         }
 
         .how-it-works-btn {
-            background: rgba(0, 0, 0, 1);
+            background: rgba(33, 93, 232, 0.8);
             border: 1px solid #e0e0e0;
             padding: 6px 12px;
             border-radius: 6px;
@@ -374,7 +461,7 @@
         }
 
         .how-it-works-btn:hover {
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(33, 93, 232, 0.8);
         }
 
         .welcome-text {
@@ -790,12 +877,34 @@
                 flex-wrap: wrap;
             }
         }
+
+        /* Footer */
+        .footer {
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            padding: 8px 24px;
+            text-align: center;
+            color: #666;
+            font-size: 11px;
+            margin-top: auto;
+            opacity: 0.6;
+            display: none;
+        }
+
+        .footer-counter {
+            font-weight: 500;
+            color: #2563eb;
+            opacity: 0.8;
+        }
     </style>
 </head>
 <body>
     <!-- Top Header -->
     <div class="top-header">
-        <a href="#" class="logo">GPTAILOR | TAILOR YOUR RESUME</a>
+        <a href="#" class="logo">
+            <img src="logo.png" alt="GPTailor Logo">
+            <span>GPTAILOR | TAILOR YOUR RESUME</span>
+        </a>
         <div class="header-nav">
             <button class="re-score-btn" onclick="showUpload()">New Analysis</button>
         </div>
@@ -804,7 +913,47 @@
     <!-- Main Layout -->
     <div class="main-layout">
         <!-- Left Sidebar -->
-        <div class="sidebar">
+        <div class="sidebar" id="sidebar" style="display: block;">
+            <!-- Promotional Content (shown before analysis) -->
+            <div id="promoContent">
+                <div style="text-align: center; margin-bottom: 32px;">
+                    <img src="logo.png" alt="GPTailor Logo" style="height: 64px; width: auto; margin-bottom: 16px;">
+                    <h2 style="font-size: 20px; font-weight: 700; color: #333; margin-bottom: 8px;">Tailor Your Resume</h2>
+                    <p style="font-size: 14px; color: #666; line-height: 1.5;">Get instant feedback and boost your chances of landing that interview</p>
+                </div>
+
+                <div class="promo-stat">
+                    <div class="promo-stat-number">+25</div>
+                    <div class="promo-stat-label">Average Score Increase</div>
+                </div>
+
+                <div class="promo-feature">
+                    <div class="promo-feature-icon">𖣠</div>
+                    <div class="promo-feature-text">
+                        <div class="promo-feature-title">ATS Optimization</div>
+                        <div class="promo-feature-desc">Match keywords recruiters are looking for</div>
+                    </div>
+                </div>
+
+                <div class="promo-feature">
+                    <div class="promo-feature-icon">₊⟡</div>
+                    <div class="promo-feature-text">
+                        <div class="promo-feature-title">Smart Suggestions</div>
+                        <div class="promo-feature-desc">AI-powered recommendations tailored to your job</div>
+                    </div>
+                </div>
+
+                <div class="promo-feature">
+                    <div class="promo-feature-icon">𓊍</div>
+                    <div class="promo-feature-text">
+                        <div class="promo-feature-title">Instant Scoring</div>
+                        <div class="promo-feature-desc">See how well your resume matches in seconds</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Functional Content (shown after analysis) -->
+            <div id="functionalContent" style="display: none;">
             <div class="score-gauge" id="scoreGaugeContainer" style="display: none;">
                 <div class="gauge-circle low" id="scoreGauge" style="--score: 0">
                     <div class="gauge-inner">
@@ -825,12 +974,15 @@
                 <!-- Will be populated by JavaScript -->
             </div>
 
-            <div class="section-title">TOOLS</div>
-            <div class="tool-item" onclick="rewriteResume()" style="cursor: pointer;">Rewrite My Resume</div>
-            <div class="tool-item" onclick="optimizeATS()" style="cursor: pointer;">Optimize ATS Keywords</div>
-            <div class="tool-item" onclick="addMissingQualifications()" style="cursor: pointer;">Add Missing Qualifications</div>
-            <div class="tool-item" onclick="improveBullets()" style="cursor: pointer;">Improve Bullet Points</div>
-            <div class="tool-item" onclick="addQuantification()" style="cursor: pointer;">Add Quantification</div>
+            <div class="section-title" id="toolsTitle" style="display: none;">TOOLS</div>
+            <div id="toolsList" style="display: none;">
+                <div class="tool-item" onclick="rewriteResume()" style="cursor: pointer;">Rewrite My Resume<span class="tool-item-soon">Soon</span></div>
+                <div class="tool-item" onclick="optimizeATS()" style="cursor: pointer;">Optimize ATS Keywords</div>
+                <div class="tool-item" onclick="addMissingQualifications()" style="cursor: pointer;">Add Missing Qualifications</div>
+                <div class="tool-item" onclick="improveBullets()" style="cursor: pointer;">Improve Bullet Points<span class="tool-item-soon">Soon</span></div>
+                <div class="tool-item" onclick="addQuantification()" style="cursor: pointer;">Add Quantification<span class="tool-item-soon">Soon</span></div>
+            </div>
+            </div>
         </div>
 
         <!-- Main Content -->
@@ -872,28 +1024,26 @@
                         </div>
                     </div>
                     
-                    <div style="text-align: center; margin-top: 8px;">
+                    <div style="text-align: center; margin-top: 24px;">
+                        <button class="how-it-works-btn" onclick="showHowItWorks()" style="margin-bottom: 16px; padding: 10px 20px; font-size: 14px;">HOW IT WORKS</button>
+                        <div style="margin-top: 16px;">
                         <button class="review-btn" onclick="analyzeResume()" id="analyzeBtn" style="padding: 14px 32px; font-size: 16px; min-width: 250px;" disabled>
                             Analyze & Score Resume
                         </button>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Results Section (hidden initially) -->
                 <div id="resultsSection" style="display: none;">
                     <div class="welcome-section">
-                        <div class="welcome-nav">
-                            <button class="nav-arrow">‹</button>
-                            <button class="nav-arrow">›</button>
-                            <button class="how-it-works-btn">HOW IT WORKS</button>
-                        </div>
                         <div class="welcome-text" id="welcomeText">Good evening, Khushi. Welcome to your resume review.</div>
                     </div>
 
                     <div class="score-section">
                         <h2 class="score-heading" id="scoreHeading">Your resume scored 36 out of 100.</h2>
                         <p class="score-description" id="scoreDescription">
-                            Your resume has been analyzed against the job posting. The score reflects how well your resume matches the job requirements. With targeted improvements, you can increase your score significantly. We'll guide you through the specific changes needed.
+                            This score reflects how well your resume aligns with this specific job posting. We've identified key areas where your resume can be improved to better match what recruiters are looking for. Review the suggestions below to boost your score and increase your chances of landing an interview.
                         </p>
                         <div class="score-bar-container">
                             <div class="score-bar" id="scoreBar" style="--score-percent: 36%"></div>
@@ -931,6 +1081,11 @@
         </div>
     </div>
 
+    <!-- Footer -->
+    <footer class="footer">
+        <span class="footer-counter" id="resumeCount">0</span> people have checked their resumes
+    </footer>
+
     <script>
         let currentAnalysis = null;
         let currentResumeText = '';
@@ -942,6 +1097,10 @@
             document.getElementById('resultsSection').style.display = 'none';
             document.getElementById('resumeDisplay').style.display = 'none';
             document.getElementById('loadingSection').style.display = 'none';
+            // Show sidebar with promotional content
+            document.getElementById('sidebar').style.display = 'block';
+            document.getElementById('promoContent').style.display = 'block';
+            document.getElementById('functionalContent').style.display = 'none';
             // Hide score sections when returning to upload
             document.getElementById('scoreGaugeContainer').style.display = 'none';
             document.getElementById('topFixesTitle').style.display = 'none';
@@ -949,6 +1108,9 @@
             document.getElementById('moreIssuesBtn').style.display = 'none';
             document.getElementById('topFixesList').innerHTML = '';
             document.getElementById('completedList').innerHTML = '';
+            // Hide tools section
+            document.getElementById('toolsTitle').style.display = 'none';
+            document.getElementById('toolsList').style.display = 'none';
         }
 
         function toggleInputMode(type, mode) {
@@ -989,9 +1151,15 @@
             const fileName = file.name;
             const fileType = file.type;
             
-            // Show file name
-            const uploadArea = event.target.closest('.upload-section').querySelector('.upload-area');
-            uploadArea.querySelector('.upload-text').textContent = `✓ ${fileName}`;
+            // Show file name - find the upload area in the same parent container as the file input
+            // The file input and upload-area are siblings within a flex column container
+            const fileInput = event.target;
+            const parentContainer = fileInput.parentElement; // Gets the flex column container
+            const uploadArea = parentContainer.querySelector('.upload-area');
+            
+            if (uploadArea) {
+                uploadArea.querySelector('.upload-text').textContent = `✓ ${fileName}`;
+            }
             
             // Check if both inputs are ready
             checkInputsReady();
@@ -1002,7 +1170,8 @@
                 return document.getElementById(`${type}TextInput`).value.trim();
             } else {
                 const fileInput = document.getElementById(`${type}FileInput`);
-                return fileInput.files[0] || null;
+                // Check for drag-and-drop file stored on the element
+                return fileInput.files[0] || fileInput._droppedFile || null;
             }
         }
 
@@ -1011,7 +1180,13 @@
             const jobInput = getInputValue('job');
             const analyzeBtn = document.getElementById('analyzeBtn');
             
-            if (resumeInput && jobInput) {
+            // Check if both inputs are valid (not null, not undefined, and not empty strings)
+            const resumeValid = resumeInput !== null && resumeInput !== undefined && 
+                               (resumeInput instanceof File || (typeof resumeInput === 'string' && resumeInput.trim().length > 0));
+            const jobValid = jobInput !== null && jobInput !== undefined && 
+                           (jobInput instanceof File || (typeof jobInput === 'string' && jobInput.trim().length > 0));
+            
+            if (resumeValid && jobValid) {
                 analyzeBtn.classList.add('ready');
                 analyzeBtn.disabled = false;
             } else {
@@ -1024,15 +1199,39 @@
             const resumeInput = getInputValue('resume');
             const jobInput = getInputValue('job');
 
-            // Validation
-            if (!resumeInput) {
-                alert('Please provide your resume (upload file or paste text).');
+            // Explicit validation with better error messages
+            if (resumeInput === null || resumeInput === undefined) {
+                alert('Please upload a resume file or paste your resume text.');
                 return;
             }
 
-            if (!jobInput) {
-                alert('Please provide the job posting (upload file or paste text).');
+            if (inputModes.resume === 'file') {
+                if (!(resumeInput instanceof File)) {
+                    alert('Please upload a valid resume file (PDF, DOC, or DOCX).');
+                    return;
+                }
+            } else {
+                if (typeof resumeInput !== 'string' || resumeInput.trim().length === 0) {
+                    alert('Please paste your resume text. The text cannot be empty.');
+                    return;
+                }
+            }
+
+            if (jobInput === null || jobInput === undefined) {
+                alert('Please upload a job posting file or paste the job description.');
                 return;
+            }
+
+            if (inputModes.job === 'file') {
+                if (!(jobInput instanceof File)) {
+                    alert('Please upload a valid job posting file (PDF, DOC, or DOCX).');
+                    return;
+                }
+            } else {
+                if (typeof jobInput !== 'string' || jobInput.trim().length === 0) {
+                    alert('Please paste the job description. The text cannot be empty.');
+                    return;
+                }
             }
 
             // Disable button during analysis
@@ -1048,18 +1247,32 @@
 
             const formData = new FormData();
 
-            // Add resume
+            // Add resume - validation ensures resumeInput is valid at this point
             if (inputModes.resume === 'file' && resumeInput instanceof File) {
                 formData.append('resume', resumeInput);
-            } else {
+            } else if (typeof resumeInput === 'string' && resumeInput.trim().length > 0) {
                 formData.append('resumeText', resumeInput);
+            } else {
+                // This should never happen due to validation above, but add safety check
+                alert('Invalid resume input. Please try again.');
+                analyzeBtn.disabled = false;
+                document.getElementById('uploadSection').style.display = 'block';
+                document.getElementById('loadingSection').style.display = 'none';
+                return;
             }
 
-            // Add job posting
+            // Add job posting - validation ensures jobInput is valid at this point
             if (inputModes.job === 'file' && jobInput instanceof File) {
                 formData.append('jobPosting', jobInput);
-            } else {
+            } else if (typeof jobInput === 'string' && jobInput.trim().length > 0) {
                 formData.append('jobPostingText', jobInput);
+            } else {
+                // This should never happen due to validation above, but add safety check
+                alert('Invalid job posting input. Please try again.');
+                analyzeBtn.disabled = false;
+                document.getElementById('uploadSection').style.display = 'block';
+                document.getElementById('loadingSection').style.display = 'none';
+                return;
             }
 
             try {
@@ -1078,6 +1291,9 @@
                 currentResumeText = data.resumeText || '';
                 currentJobPostingText = data.jobPostingText || '';
                 displayResults(data);
+                
+                // Update resume counter after successful analysis
+                loadResumeCount();
             } catch (error) {
                 alert('Error: ' + error.message);
                 showUpload();
@@ -1092,11 +1308,18 @@
             const analysis = data.analysis;
             const resumeText = data.resumeText || '';
 
+            // Show entire sidebar after analysis
+            document.getElementById('sidebar').style.display = 'block';
+            // Switch from promotional to functional content
+            document.getElementById('promoContent').style.display = 'none';
+            document.getElementById('functionalContent').style.display = 'block';
             // Show score gauge
             document.getElementById('scoreGaugeContainer').style.display = 'block';
             document.getElementById('topFixesTitle').style.display = 'block';
             document.getElementById('completedTitle').style.display = 'block';
-            document.getElementById('moreIssuesBtn').style.display = 'block';
+            // Show tools section after analysis
+            document.getElementById('toolsTitle').style.display = 'block';
+            document.getElementById('toolsList').style.display = 'block';
 
             // Update score
             const score = analysis.score || analysis.overall || 0;
@@ -1115,8 +1338,10 @@
             // Update top fixes
             const topFixesList = document.getElementById('topFixesList');
             topFixesList.innerHTML = '';
+            const topFixesToShow = 5;
+            
             if (analysis.topFixes && analysis.topFixes.length > 0) {
-                analysis.topFixes.slice(0, 5).forEach(fix => {
+                analysis.topFixes.slice(0, topFixesToShow).forEach(fix => {
                     const item = document.createElement('div');
                     item.className = 'issue-item';
                     item.innerHTML = `
@@ -1134,6 +1359,19 @@
                     <div class="issue-item"><span>Unnecessary sec...</span><span class="issue-count">5</span></div>
                     <div class="issue-item"><span>Weak verbs</span><span class="issue-lock">🔒</span></div>
                 `;
+            }
+
+            // Update "More Issues" button - show correct count or hide if all issues are displayed
+            const moreIssuesBtn = document.getElementById('moreIssuesBtn');
+            const totalIssues = (analysis.issues && analysis.issues.length > 0) ? analysis.issues.length : 0;
+            const issuesShownInSidebar = 5; // We show up to 5 top fixes in the sidebar
+            const remainingIssues = totalIssues - issuesShownInSidebar;
+            
+            if (remainingIssues > 0) {
+                moreIssuesBtn.textContent = `${remainingIssues} MORE ISSUES +`;
+                moreIssuesBtn.style.display = 'block';
+            } else {
+                moreIssuesBtn.style.display = 'none';
             }
 
             // Update completed
@@ -1334,12 +1572,13 @@
 
         function showFixGuide(title, description, detailedGuide, fixData) {
             const modal = document.createElement('div');
+            modal.className = 'modal-overlay';
             modal.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 10000;';
             modal.innerHTML = `
                 <div style="background: white; padding: 32px; border-radius: 12px; max-width: 700px; max-height: 80vh; overflow-y: auto; box-shadow: 0 20px 40px rgba(0,0,0,0.2);">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
                         <h2 style="margin: 0; font-size: 24px; font-weight: 600;">Fix Guide: ${title}</h2>
-                        <button onclick="this.closest('div[style*=\"position: fixed\"]').remove()" style="background: transparent; border: none; font-size: 24px; cursor: pointer; color: #666;">×</button>
+                        <button onclick="this.closest('.modal-overlay').remove()" style="background: transparent; border: none; font-size: 24px; cursor: pointer; color: #666;">×</button>
                     </div>
                     <div style="margin-bottom: 24px;">
                         <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 12px;">Issue Description:</h3>
@@ -1349,7 +1588,7 @@
                         <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 12px;">How to Fix:</h3>
                         <div style="background: #f0f7ff; padding: 16px; border-radius: 8px; white-space: pre-wrap; font-size: 14px; line-height: 1.6;">${detailedGuide}</div>
                     </div>
-                    <button onclick="this.closest('div[style*=\"position: fixed\"]').remove()" style="margin-top: 24px; width: 100%; padding: 12px; background: #2563eb; color: white; border: none; border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer;">Close</button>
+                    <button onclick="this.closest('.modal-overlay').remove()" style="margin-top: 24px; width: 100%; padding: 12px; background: #2563eb; color: white; border: none; border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer;">Close</button>
                 </div>
             `;
             document.body.appendChild(modal);
@@ -1357,13 +1596,14 @@
 
         function showDetailedFixGuide(title, description, fixData) {
             const modal = document.createElement('div');
+            modal.className = 'modal-overlay';
             modal.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 10000;';
             
             let content = `
                 <div style="background: white; padding: 32px; border-radius: 12px; max-width: 800px; max-height: 80vh; overflow-y: auto; box-shadow: 0 20px 40px rgba(0,0,0,0.2);">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
                         <h2 style="margin: 0; font-size: 24px; font-weight: 600;">Fix Guide: ${title}</h2>
-                        <button onclick="this.closest('div[style*=\"position: fixed\"]').remove()" style="background: transparent; border: none; font-size: 24px; cursor: pointer; color: #666;">×</button>
+                        <button onclick="this.closest('.modal-overlay').remove()" style="background: transparent; border: none; font-size: 24px; cursor: pointer; color: #666;">×</button>
                     </div>
                     <div style="margin-bottom: 24px;">
                         <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 12px;">Issue Description:</h3>
@@ -1443,7 +1683,7 @@
             }
 
             content += `
-                    <button onclick="this.closest('div[style*=\"position: fixed\"]').remove()" style="margin-top: 24px; width: 100%; padding: 12px; background: #2563eb; color: white; border: none; border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer;">Close</button>
+                    <button onclick="this.closest('.modal-overlay').remove()" style="margin-top: 24px; width: 100%; padding: 12px; background: #2563eb; color: white; border: none; border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer;">Close</button>
                 </div>
             `;
 
@@ -1458,13 +1698,14 @@
             }
 
             const modal = document.createElement('div');
+            modal.className = 'modal-overlay';
             modal.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 10000;';
             
             const issuesHtml = currentAnalysis.issues.map((issue, index) => `
                 <div style="padding: 16px; border: 1px solid #e0e0e0; border-radius: 8px; margin-bottom: 12px;">
                     <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
                         <h4 style="margin: 0; font-size: 16px; font-weight: 600; color: #333;">${index + 1}. ${issue.title}</h4>
-                        <button onclick="fixIssue('${issue.category || issue.title}'); this.closest('div[style*=\"position: fixed\"]').remove();" style="background: #2563eb; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 12px; cursor: pointer;">Fix →</button>
+                        <button onclick="fixIssue('${issue.category || issue.title}'); this.closest('.modal-overlay').remove();" style="background: #2563eb; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 12px; cursor: pointer;">Fix →</button>
                     </div>
                     <p style="margin: 0; font-size: 14px; color: #666; line-height: 1.5;">${issue.description}</p>
                 </div>
@@ -1474,23 +1715,20 @@
                 <div style="background: white; padding: 32px; border-radius: 12px; max-width: 800px; max-height: 80vh; overflow-y: auto; box-shadow: 0 20px 40px rgba(0,0,0,0.2);">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
                         <h2 style="margin: 0; font-size: 24px; font-weight: 600;">All Issues (${currentAnalysis.issues.length})</h2>
-                        <button onclick="this.closest('div[style*=\"position: fixed\"]').remove()" style="background: transparent; border: none; font-size: 24px; cursor: pointer; color: #666;">×</button>
+                        <button onclick="this.closest('.modal-overlay').remove()" style="background: transparent; border: none; font-size: 24px; cursor: pointer; color: #666;">×</button>
                     </div>
                     <div>
                         ${issuesHtml}
                     </div>
-                    <button onclick="this.closest('div[style*=\"position: fixed\"]').remove()" style="margin-top: 24px; width: 100%; padding: 12px; background: #2563eb; color: white; border: none; border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer;">Close</button>
+                    <button onclick="this.closest('.modal-overlay').remove()" style="margin-top: 24px; width: 100%; padding: 12px; background: #2563eb; color: white; border: none; border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer;">Close</button>
                 </div>
             `;
             document.body.appendChild(modal);
         }
 
         function rewriteResume() {
-            if (!currentAnalysis) {
-                alert('Please analyze your resume first.');
-                return;
-            }
-            alert('Resume Rewriter - This feature would use AI to rewrite your resume based on the job posting requirements.');
+            console.log('rewriteResume called');
+            showFeatureRequestModal('Rewrite My Resume', 'This feature will use AI to rewrite your resume based on the job posting requirements, helping you tailor it perfectly for each application.');
         }
 
         async function optimizeATS() {
@@ -1571,12 +1809,13 @@
 
         function showToolResults(title, items, suggestions) {
             const modal = document.createElement('div');
+            modal.className = 'modal-overlay';
             modal.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 10000;';
             modal.innerHTML = `
                 <div style="background: white; padding: 32px; border-radius: 12px; max-width: 600px; max-height: 80vh; overflow-y: auto; box-shadow: 0 20px 40px rgba(0,0,0,0.2);">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
                         <h2 style="margin: 0; font-size: 24px; font-weight: 600;">${title}</h2>
-                        <button onclick="this.closest('div[style*=\"position: fixed\"]').remove()" style="background: transparent; border: none; font-size: 24px; cursor: pointer; color: #666;">×</button>
+                        <button onclick="this.closest('.modal-overlay').remove()" style="background: transparent; border: none; font-size: 24px; cursor: pointer; color: #666;">×</button>
                     </div>
                     <div style="margin-bottom: 24px;">
                         <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 12px;">Missing Items:</h3>
@@ -1590,26 +1829,188 @@
                         <div style="background: #f5f5f5; padding: 16px; border-radius: 8px; white-space: pre-wrap; font-size: 14px; line-height: 1.6;">${suggestions}</div>
                     </div>
                     ` : ''}
-                    <button onclick="this.closest('div[style*=\"position: fixed\"]').remove()" style="margin-top: 24px; width: 100%; padding: 12px; background: #2563eb; color: white; border: none; border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer;">Close</button>
+                    <button onclick="this.closest('.modal-overlay').remove()" style="margin-top: 24px; width: 100%; padding: 12px; background: #2563eb; color: white; border: none; border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer;">Close</button>
                 </div>
             `;
             document.body.appendChild(modal);
         }
 
         function improveBullets() {
-            if (!currentAnalysis) {
-                alert('Please analyze your resume first.');
-                return;
-            }
-            alert('Bullet Point Improver - This feature would enhance your bullet points to better match the job requirements.');
+            showFeatureRequestModal('Improve Bullet Points', 'This feature will enhance your bullet points to better match the job requirements, making your accomplishments stand out to recruiters.');
         }
 
         function addQuantification() {
-            if (!currentAnalysis) {
-                alert('Please analyze your resume first.');
-                return;
+            showFeatureRequestModal('Add Quantification', 'This feature will suggest where to add numbers and metrics to strengthen your resume, helping you quantify your achievements.');
+        }
+
+        function showFeatureRequestModal(featureName, featureDescription) {
+            console.log('showFeatureRequestModal called with:', featureName);
+            // Escape HTML to prevent XSS
+            const escapeHtml = (text) => {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            };
+            
+            const escapedName = escapeHtml(featureName);
+            const escapedDescription = escapeHtml(featureDescription);
+            
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay';
+            modal.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 10000;';
+            modal.innerHTML = `
+                <div style="background: white; padding: 32px; border-radius: 12px; max-width: 500px; box-shadow: 0 20px 40px rgba(0,0,0,0.2);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                        <h2 style="margin: 0; font-size: 24px; font-weight: 600;">${escapedName}</h2>
+                        <button onclick="this.closest('.modal-overlay').remove()" style="background: transparent; border: none; font-size: 24px; cursor: pointer; color: #666;">×</button>
+                    </div>
+                    <div style="margin-bottom: 24px;">
+                        <p style="color: #666; font-size: 15px; line-height: 1.6; margin-bottom: 16px;">${escapedDescription}</p>
+                        <div style="background: #fef3c7; padding: 16px; border-radius: 8px; border-left: 4px solid #f59e0b;">
+                            <p style="margin: 0; color: #333; font-size: 14px; line-height: 1.5;">
+                                <strong>Coming Soon!</strong><br>
+                                This feature is in our roadmap. If you'd like to see it released sooner, vote below! We'll prioritize features with more requests.
+                            </p>
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; font-size: 14px; font-weight: 500; color: #333; margin-bottom: 8px;">
+                            Email (optional - to be notified when this feature is available)
+                        </label>
+                        <input type="email" id="feature-request-email" placeholder="your.email@example.com" style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 14px; font-family: inherit; box-sizing: border-box;">
+                        <p style="margin: 6px 0 0 0; font-size: 12px; color: #666;">We'll only use this to notify you when the feature is ready</p>
+                    </div>
+                    <div style="display: flex; gap: 12px;">
+                        <button class="vote-feature-btn" data-feature="${escapedName}" style="flex: 1; padding: 12px; background: #2563eb; color: white; border: none; border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer; transition: background 0.2s;">Vote to Release Sooner</button>
+                        <button onclick="this.closest('.modal-overlay').remove()" style="padding: 12px 24px; background: #f5f5f5; color: #666; border: none; border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer; transition: background 0.2s;">Close</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            
+            // Add event listener to vote button to avoid inline onclick issues with quotes
+            const voteBtn = modal.querySelector('.vote-feature-btn');
+            if (voteBtn) {
+                voteBtn.addEventListener('click', function() {
+                    const feature = this.getAttribute('data-feature');
+                    const emailInput = modal.querySelector('#feature-request-email');
+                    const userEmail = emailInput ? emailInput.value.trim() : '';
+                    
+                    // Validate email if provided
+                    if (userEmail && !isValidEmail(userEmail)) {
+                        alert('Please enter a valid email address or leave it blank.');
+                        return;
+                    }
+                    
+                    requestFeature(feature, userEmail);
+                    modal.remove();
+                });
             }
-            alert('Quantification Helper - This feature would suggest where to add numbers and metrics to strengthen your resume.');
+            
+        }
+        
+        // Helper function to validate email
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        async function requestFeature(featureName, userEmail = '') {
+            try {
+                const response = await fetch('/api/request-feature', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        featureName,
+                        userEmail: userEmail || null
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to submit request');
+                }
+
+                const data = await response.json();
+                
+                // Show success message
+                const successModal = document.createElement('div');
+                successModal.className = 'modal-overlay';
+                successModal.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 10001;';
+                
+                const emailMessage = data.userEmail 
+                    ? ` We'll notify you at ${data.userEmail} when this feature is available!` 
+                    : ' Keep an eye out for updates!';
+                
+                successModal.innerHTML = `
+                    <div style="background: white; padding: 32px; border-radius: 12px; max-width: 400px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); text-align: center;">
+                        <div style="font-size: 48px; margin-bottom: 16px;">✅</div>
+                        <h2 style="margin: 0 0 12px 0; font-size: 20px; font-weight: 600;">Thank You!</h2>
+                        <p style="color: #666; font-size: 14px; line-height: 1.6; margin-bottom: 24px;">Your vote for "${featureName}" has been recorded.${emailMessage}</p>
+                        <button onclick="this.closest('.modal-overlay').remove()" style="width: 100%; padding: 12px; background: #2563eb; color: white; border: none; border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer;">Close</button>
+                    </div>
+                `;
+                document.body.appendChild(successModal);
+            } catch (error) {
+                alert('Error submitting request. Please try again later.');
+                console.error('Feature request error:', error);
+            }
+        }
+
+        function showHowItWorks() {
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay';
+            modal.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 10000;';
+            modal.innerHTML = `
+                <div style="background: white; padding: 32px; border-radius: 12px; max-width: 700px; max-height: 80vh; overflow-y: auto; box-shadow: 0 20px 40px rgba(0,0,0,0.2);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                        <h2 style="margin: 0; font-size: 24px; font-weight: 600;">How It Works</h2>
+                        <button onclick="this.closest('.modal-overlay').remove()" style="background: transparent; border: none; font-size: 24px; cursor: pointer; color: #666;">×</button>
+                    </div>
+                    <div style="line-height: 1.8; font-size: 15px; color: #333;">
+                        <div style="margin-bottom: 24px;">
+                            <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 12px; color: #2563eb;">1. Upload Your Resume & Job Posting</h3>
+                            <p style="color: #666; margin-bottom: 8px;">Upload your resume (PDF, DOC, or paste text) and the job posting you're applying for. Our AI will analyze both documents to understand the requirements.</p>
+                        </div>
+                        <div style="margin-bottom: 24px;">
+                            <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 12px; color: #2563eb;">2. Get Your Score</h3>
+                            <p style="color: #666; margin-bottom: 8px;">We'll give you a score from 0-100 that reflects how well your resume matches the job posting. This score is based on:</p>
+                            <ul style="color: #666; padding-left: 20px; margin-top: 8px;">
+                                <li>Job-relevant content and skills match (40%)</li>
+                                <li>Keyword alignment with job posting (25%)</li>
+                                <li>Experience relevance to job requirements (20%)</li>
+                                <li>Quantified achievements relevant to the role (15%)</li>
+                            </ul>
+                        </div>
+                        <div style="margin-bottom: 24px;">
+                            <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 12px; color: #2563eb;">3. Review Issues & Fixes</h3>
+                            <p style="color: #666; margin-bottom: 8px;">We'll identify specific areas where your resume can be improved. Click on any issue to see detailed suggestions on how to fix it, including:</p>
+                            <ul style="color: #666; padding-left: 20px; margin-top: 8px;">
+                                <li>Step-by-step guides</li>
+                                <li>Before and after examples</li>
+                                <li>Keywords to add</li>
+                                <li>Specific examples tailored to your resume</li>
+                            </ul>
+                        </div>
+                        <div style="margin-bottom: 24px;">
+                            <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 12px; color: #2563eb;">4. Use Our Tools</h3>
+                            <p style="color: #666; margin-bottom: 8px;">Take advantage of our AI-powered tools to optimize your resume:</p>
+                            <ul style="color: #666; padding-left: 20px; margin-top: 8px;">
+                                <li><strong>Optimize ATS Keywords:</strong> Find missing keywords from the job posting</li>
+                                <li><strong>Add Missing Qualifications:</strong> Identify gaps in your qualifications</li>
+                            </ul>
+                        </div>
+                        <div style="margin-bottom: 24px;">
+                            <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 12px; color: #2563eb;">5. Revise & Re-upload</h3>
+                            <p style="color: #666; margin-bottom: 8px;">Make the suggested improvements to your resume, then upload it again to get a new score. Most users see a 20+ point increase after just a few revisions!</p>
+                        </div>
+                        <div style="background: #f0f7ff; padding: 16px; border-radius: 8px; border-left: 4px solid #2563eb; margin-top: 24px;">
+                            <p style="margin: 0; color: #333; font-weight: 500;">💡 <strong>Tip:</strong> The more you tailor your resume to each specific job posting, the higher your score will be. Focus on matching keywords, highlighting relevant experience, and quantifying your achievements.</p>
+                        </div>
+                    </div>
+                    <button onclick="this.closest('.modal-overlay').remove()" style="margin-top: 24px; width: 100%; padding: 12px; background: #2563eb; color: white; border: none; border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer;">Close</button>
+                </div>
+            `;
+            document.body.appendChild(modal);
         }
 
         // Setup drag and drop and input listeners
@@ -1619,8 +2020,16 @@
             document.getElementById('jobTextInput').addEventListener('input', checkInputsReady);
             
             // Add event listeners for file inputs
-            document.getElementById('resumeFileInput').addEventListener('change', () => checkInputsReady());
-            document.getElementById('jobFileInput').addEventListener('change', () => checkInputsReady());
+            document.getElementById('resumeFileInput').addEventListener('change', (e) => {
+                // Clear any previously dropped file when a new file is selected
+                e.target._droppedFile = null;
+                checkInputsReady();
+            });
+            document.getElementById('jobFileInput').addEventListener('change', (e) => {
+                // Clear any previously dropped file when a new file is selected
+                e.target._droppedFile = null;
+                checkInputsReady();
+            });
             
             // Initial check
             checkInputsReady();
@@ -1650,11 +2059,62 @@
                     
                     const files = e.dataTransfer.files;
                     if (files.length > 0) {
-                        fileInput.files = files;
-                        handleFileUpload(type, { target: fileInput });
+                        // Store the file on the input element since files property is read-only
+                        fileInput._droppedFile = files[0];
+                        
+                        // Create a DataTransfer object to properly handle the file
+                        const dataTransfer = new DataTransfer();
+                        dataTransfer.items.add(files[0]);
+                        
+                        // Create a synthetic event object that mimics a file input
+                        const syntheticEvent = {
+                            target: {
+                                files: dataTransfer.files,
+                                parentElement: fileInput.parentElement
+                            }
+                        };
+                        
+                        // Call handleFileUpload with the synthetic event
+                        handleFileUpload(type, syntheticEvent);
+                        
+                        // Trigger change event on the file input so checkInputsReady() works
+                        const changeEvent = new Event('change', { bubbles: true });
+                        fileInput.dispatchEvent(changeEvent);
                     }
                 });
             });
+        });
+
+        // Load and display resume counter
+        async function loadResumeCount() {
+            try {
+                const response = await fetch('/api/resume-count');
+                if (response.ok) {
+                    const data = await response.json();
+                    const countElement = document.getElementById('resumeCount');
+                    const footerElement = document.querySelector('.footer');
+                    
+                    if (countElement) {
+                        countElement.textContent = data.count.toLocaleString();
+                    }
+                    
+                    // Only show footer if more than 10 people have checked
+                    if (footerElement) {
+                        if (data.count > 10) {
+                            footerElement.style.display = 'block';
+                        } else {
+                            footerElement.style.display = 'none';
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading resume count:', error);
+            }
+        }
+
+        // Load counter on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadResumeCount();
         });
     </script>
 </body>

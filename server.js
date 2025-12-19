@@ -3,6 +3,9 @@ const cors = require('cors');
 const multer = require('multer');
 const pdf = require('pdf-parse');
 const OpenAI = require('openai');
+const nodemailer = require('nodemailer');
+const fs = require('fs');
+const path = require('path');
 require('dotenv').config();
 
 const app = express();
@@ -200,6 +203,9 @@ app.post('/api/analyze', upload, async (req, res) => {
 
     // Analyze resume against job posting
     const analysis = await analyzeResume(resumeText, jobPostingText);
+
+    // Increment resume counter
+    incrementResumeCounter();
 
     res.json({
       success: true,
@@ -436,13 +442,169 @@ Return ONLY valid JSON, no markdown formatting.`;
   }
 });
 
+// Request Feature - sends email notification
+app.post('/api/request-feature', async (req, res) => {
+  try {
+    const { featureName, userEmail } = req.body;
+
+    if (!featureName) {
+      return res.status(400).json({ error: 'Feature name is required.' });
+    }
+
+    // Configure email transporter
+    // Supports Gmail, Yahoo, and other SMTP providers
+    const emailUser = process.env.EMAIL_USER;
+    const emailPass = process.env.EMAIL_PASS;
+    
+    let transporter;
+    
+    if (emailUser && emailPass) {
+      // Determine email service from the email address
+      const isGmail = emailUser.includes('@gmail.com');
+      const isYahoo = emailUser.includes('@yahoo.com') || emailUser.includes('@yahoo.co.uk');
+      
+      if (isGmail) {
+        transporter = nodemailer.createTransport({
+          service: 'gmail',
+          auth: {
+            user: emailUser,
+            pass: emailPass.replace(/\s/g, '') // Remove spaces from app password
+          }
+        });
+        // Verify connection
+        transporter.verify(function(error, success) {
+          if (error) {
+            console.error('❌ Gmail connection error:', error);
+          } else {
+            console.log('✅ Gmail server is ready to send emails');
+          }
+        });
+      } else if (isYahoo) {
+        transporter = nodemailer.createTransport({
+          host: 'smtp.mail.yahoo.com',
+          port: 587,
+          secure: false,
+          auth: {
+            user: emailUser,
+            pass: emailPass
+          }
+        });
+      } else {
+        // Generic SMTP (for other providers)
+        transporter = nodemailer.createTransport({
+          host: process.env.SMTP_HOST || 'smtp.gmail.com',
+          port: parseInt(process.env.SMTP_PORT || '587'),
+          secure: false,
+          auth: {
+            user: emailUser,
+            pass: emailPass
+          }
+        });
+      }
+    }
+
+    // Send email (only if email is configured)
+    if (emailUser && emailPass && transporter) {
+      console.log(`📧 Attempting to send email for feature: ${featureName}`);
+      // Email content
+      const mailOptions = {
+        from: emailUser,
+        to: 'khushisingh7205@yahoo.com',
+        subject: `Feature Request: ${featureName}`,
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2 style="color: #2563eb;">New Feature Request</h2>
+            <p><strong>Feature:</strong> ${featureName}</p>
+            <p><strong>Requested at:</strong> ${new Date().toLocaleString()}</p>
+            <p><strong>User IP:</strong> ${req.ip || req.connection.remoteAddress}</p>
+            ${userEmail ? `<p><strong>User Email:</strong> ${userEmail} (wants to be notified when feature is available)</p>` : '<p><strong>User Email:</strong> Not provided</p>'}
+            <hr style="border: 1px solid #e0e0e0; margin: 20px 0;">
+            <p style="color: #666; font-size: 14px;">Someone has requested that "${featureName}" be released sooner. Consider prioritizing this feature if you receive 5+ requests.</p>
+            ${userEmail ? `<p style="color: #2563eb; font-size: 14px; font-weight: 500;">📧 Remember to notify ${userEmail} when this feature is released!</p>` : ''}
+          </div>
+        `,
+        text: `New Feature Request: ${featureName}\n\nRequested at: ${new Date().toLocaleString()}\nUser IP: ${req.ip || req.connection.remoteAddress}\nUser Email: ${userEmail || 'Not provided'}${userEmail ? ' (wants to be notified when feature is available)' : ''}\n\n${userEmail ? `Remember to notify ${userEmail} when this feature is released!` : ''}`
+      };
+
+      try {
+        await transporter.sendMail(mailOptions);
+        console.log(`✅ Feature request email sent for: ${featureName}`);
+        console.log(`   From: ${emailUser}`);
+        console.log(`   To: khushisingh7205@yahoo.com`);
+      } catch (emailError) {
+        console.error('❌ Email sending error:', emailError.message);
+        console.error('   Full error:', emailError);
+        // Still return success to user even if email fails
+        // You might want to log this to a database or file instead
+      }
+    } else {
+      console.log(`⚠️  Feature request received for: ${featureName}`);
+      console.log(`   Email not configured - EMAIL_USER: ${emailUser ? 'set' : 'not set'}, EMAIL_PASS: ${emailPass ? 'set' : 'not set'}`);
+      // Log to console if email isn't configured
+    }
+
+    res.json({ 
+      success: true, 
+      message: 'Feature request submitted successfully.',
+      featureName,
+      userEmail: userEmail || null
+    });
+  } catch (error) {
+    console.error('Feature request error:', error);
+    res.status(500).json({ 
+      error: error.message || 'Failed to submit feature request.' 
+    });
+  }
+});
+
+// Resume counter functions
+const COUNTER_FILE = path.join(__dirname, 'resume_counter.json');
+
+function getResumeCount() {
+  try {
+    if (fs.existsSync(COUNTER_FILE)) {
+      const data = fs.readFileSync(COUNTER_FILE, 'utf8');
+      const counter = JSON.parse(data);
+      return counter.count || 0;
+    }
+    return 0;
+  } catch (error) {
+    console.error('Error reading resume counter:', error);
+    return 0;
+  }
+}
+
+function incrementResumeCounter() {
+  try {
+    const currentCount = getResumeCount();
+    const newCount = currentCount + 1;
+    fs.writeFileSync(COUNTER_FILE, JSON.stringify({ count: newCount, lastUpdated: new Date().toISOString() }), 'utf8');
+    console.log(`📊 Resume counter incremented to: ${newCount}`);
+    return newCount;
+  } catch (error) {
+    console.error('Error incrementing resume counter:', error);
+    return getResumeCount();
+  }
+}
+
+// Get resume count
+app.get('/api/resume-count', (req, res) => {
+  try {
+    const count = getResumeCount();
+    res.json({ count });
+  } catch (error) {
+    console.error('Error getting resume count:', error);
+    res.status(500).json({ error: 'Failed to get resume count' });
+  }
+});
+
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
+  console.log(` Server running on http://localhost:${PORT}`);
   if (process.env.OPENAI_API_KEY) {
     console.log(`✅ OpenAI API key is configured`);
   } else {

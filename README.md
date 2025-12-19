@@ -26,7 +26,7 @@ A powerful web application that uses OpenAI GPT-4 to review and score resumes, p
 - **Responsive Design**: Works on desktop, tablet, and mobile devices
 - **Real-time Updates**: See your score and feedback instantly
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 - Node.js (v14 or higher)
@@ -140,7 +140,7 @@ You'll need an OpenAI API key with access to GPT-4:
 - Monitor your usage in the OpenAI dashboard
 - Consider using GPT-3.5-turbo for lower costs (change `OPENAI_MODEL` in `.env`)
 
-## 🎯 Scoring Criteria
+## 𖣠 Scoring Criteria
 
 The AI evaluates resumes based on:
 
