@@ -22,6 +22,8 @@
             display: flex;
             flex-direction: column;
             min-height: 100vh;
+            overflow-x: hidden;
+            width: 100%;
         }
 
         /* Header */
@@ -583,12 +585,16 @@
         .issue-card {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-start;
+            gap: 16px;
             padding: 20px;
             border: 1px solid #e0e0e0;
             border-radius: 8px;
             margin-bottom: 16px;
             transition: all 0.2s;
+            box-sizing: border-box;
+            width: 100%;
+            overflow: hidden;
         }
 
         .issue-card:hover {
@@ -598,6 +604,8 @@
 
         .issue-info {
             flex: 1;
+            min-width: 0;
+            overflow: hidden;
         }
 
         .issue-title {
@@ -619,6 +627,9 @@
             font-size: 14px;
             color: #666;
             line-height: 1.5;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            max-width: 100%;
         }
 
         .fix-btn {
@@ -632,6 +643,9 @@
             cursor: pointer;
             transition: background 0.2s;
             white-space: nowrap;
+            flex-shrink: 0;
+            max-width: 100%;
+            box-sizing: border-box;
         }
 
         .fix-btn:hover {
@@ -739,6 +753,7 @@
             max-width: 1000px;
             margin-left: auto;
             margin-right: auto;
+            box-sizing: border-box;
         }
 
         .upload-area {
@@ -752,6 +767,8 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .upload-area:hover {
@@ -775,6 +792,23 @@
         .upload-hint {
             font-size: 13px;
             color: #666;
+        }
+
+        .upload-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 32px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .upload-grid > div {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .hidden-file-input {
@@ -858,6 +892,31 @@
             }
         }
 
+        @media (max-width: 1024px) {
+            .upload-grid {
+                grid-template-columns: 1fr !important;
+                gap: 20px !important;
+            }
+
+            .upload-section {
+                padding: 24px;
+            }
+
+            .main-content {
+                padding: 20px;
+            }
+
+            .sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid #e0e0e0;
+            }
+
+            .main-layout {
+                flex-direction: column;
+            }
+        }
+
         @media (max-width: 768px) {
             .main-layout {
                 flex-direction: column;
@@ -871,10 +930,136 @@
 
             .top-header {
                 flex-wrap: wrap;
+                padding: 12px 16px;
             }
 
             .header-nav {
                 flex-wrap: wrap;
+            }
+
+            .main-content {
+                padding: 16px;
+                gap: 16px;
+            }
+
+            .upload-section {
+                padding: 20px;
+                margin-bottom: 16px;
+            }
+
+            .upload-grid {
+                grid-template-columns: 1fr !important;
+                gap: 16px !important;
+                margin-bottom: 24px !important;
+            }
+
+            .upload-area {
+                padding: 30px 16px;
+                min-height: 120px;
+            }
+
+            .upload-icon {
+                font-size: 36px;
+                margin-bottom: 12px;
+            }
+
+            .upload-text {
+                font-size: 14px;
+            }
+
+            .upload-hint {
+                font-size: 12px;
+            }
+
+            .content-right {
+                width: 100%;
+                min-width: 100%;
+                padding: 16px;
+            }
+
+            .score-section {
+                padding: 20px;
+            }
+
+            .issues-section {
+                padding: 20px;
+            }
+
+            .issue-card {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .fix-btn {
+                width: 100%;
+                max-width: 100%;
+            }
+            
+            .issue-info {
+                width: 100%;
+            }
+
+            #analyzeBtn {
+                width: 100%;
+                min-width: auto;
+                padding: 12px 24px;
+                font-size: 14px;
+            }
+
+            .how-it-works-btn {
+                width: 100%;
+                margin-bottom: 12px !important;
+            }
+
+            textarea {
+                font-size: 14px !important;
+                padding: 10px !important;
+            }
+
+            .toggle-btn {
+                flex: 1;
+                font-size: 11px;
+                padding: 8px 10px;
+            }
+
+            .logo span {
+                font-size: 12px;
+            }
+
+            .logo img {
+                height: 24px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                overflow-x: hidden;
+            }
+
+            .upload-section {
+                padding: 16px;
+            }
+
+            .upload-area {
+                padding: 24px 12px;
+                min-height: 100px;
+            }
+
+            .upload-icon {
+                font-size: 32px;
+            }
+
+            .main-content {
+                padding: 12px;
+            }
+
+            .top-header {
+                padding: 10px 12px;
+            }
+
+            .logo span {
+                font-size: 11px;
             }
         }
 
@@ -990,7 +1175,7 @@
             <div class="content-left">
                 <!-- Upload Section (shown initially) -->
                 <div class="upload-section" id="uploadSection">
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 32px;">
+                    <div class="upload-grid">
                         <!-- Resume Upload -->
                         <div style="display: flex; flex-direction: column;">
                             <label style="display: block; font-weight: 600; margin-bottom: 12px; font-size: 14px; color: #333;">Your Resume</label>
@@ -1000,7 +1185,10 @@
                                 <div class="upload-hint">PDF, DOC, or paste text</div>
                             </div>
                             <input type="file" id="resumeFileInput" class="hidden-file-input" accept=".pdf,.doc,.docx" onchange="handleFileUpload('resume', event)">
-                            <textarea id="resumeTextInput" placeholder="Or paste your resume text here..." style="display: none; width: 100%; min-height: 150px; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; margin-top: 12px; font-size: 13px; font-family: inherit; resize: vertical;"></textarea>
+                            <div id="resumeFileError" style="display: none; margin-top: 8px; padding: 8px; border-radius: 6px; font-size: 12px; background: #fee2e2; color: #991b1b;"></div>
+                            <textarea id="resumeTextInput" placeholder="Or paste your resume text here..." maxlength="20000" style="display: none; width: 100%; min-height: 150px; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; margin-top: 12px; font-size: 13px; font-family: inherit; resize: vertical; box-sizing: border-box;"></textarea>
+                            <div id="resumeTextCount" style="display: none; margin-top: 4px; font-size: 11px; color: #666; text-align: right;"></div>
+                            <div id="resumeTextError" style="display: none; margin-top: 8px; padding: 8px; border-radius: 6px; font-size: 12px; background: #fee2e2; color: #991b1b;"></div>
                             <div style="margin-top: 12px; display: flex; gap: 8px;">
                                 <button type="button" class="toggle-btn active" onclick="toggleInputMode('resume', 'file')" id="resumeFileBtn">Upload</button>
                                 <button type="button" class="toggle-btn" onclick="toggleInputMode('resume', 'text')" id="resumeTextBtn">Paste Text</button>
@@ -1013,13 +1201,19 @@
                             <div class="upload-area" onclick="document.getElementById('jobFileInput').click()">
                                 <div class="upload-icon"></div>
                                 <div class="upload-text">Upload Job Posting</div>
-                                <div class="upload-hint">PDF, DOC, or paste text</div>
+                                <div class="upload-hint">PDF, DOC, paste text, or paste URL</div>
                             </div>
                             <input type="file" id="jobFileInput" class="hidden-file-input" accept=".pdf,.doc,.docx" onchange="handleFileUpload('job', event)">
-                            <textarea id="jobTextInput" placeholder="Or paste the job description here..." style="display: none; width: 100%; min-height: 150px; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; margin-top: 12px; font-size: 13px; font-family: inherit; resize: vertical;"></textarea>
-                            <div style="margin-top: 12px; display: flex; gap: 8px;">
+                            <div id="jobFileError" style="display: none; margin-top: 8px; padding: 8px; border-radius: 6px; font-size: 12px; background: #fee2e2; color: #991b1b;"></div>
+                            <textarea id="jobTextInput" placeholder="Or paste the job description here..." maxlength="10000" style="display: none; width: 100%; min-height: 150px; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; margin-top: 12px; font-size: 13px; font-family: inherit; resize: vertical; box-sizing: border-box;"></textarea>
+                            <div id="jobTextCount" style="display: none; margin-top: 4px; font-size: 11px; color: #666; text-align: right;"></div>
+                            <div id="jobTextError" style="display: none; margin-top: 8px; padding: 8px; border-radius: 6px; font-size: 12px; background: #fee2e2; color: #991b1b;"></div>
+                            <input type="url" id="jobUrlInput" placeholder="Paste job posting URL here (e.g., LinkedIn, Indeed, etc.)" style="display: none; width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; margin-top: 12px; font-size: 13px; font-family: inherit; box-sizing: border-box;">
+                            <div id="jobUrlStatus" style="display: none; margin-top: 8px; padding: 8px; border-radius: 6px; font-size: 12px;"></div>
+                            <div style="margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap;">
                                 <button type="button" class="toggle-btn active" onclick="toggleInputMode('job', 'file')" id="jobFileBtn">Upload</button>
                                 <button type="button" class="toggle-btn" onclick="toggleInputMode('job', 'text')" id="jobTextBtn">Paste Text</button>
+                                <button type="button" class="toggle-btn" onclick="toggleInputMode('job', 'url')" id="jobUrlBtn">Paste URL</button>
                             </div>
                         </div>
                     </div>
@@ -1087,10 +1281,15 @@
     </footer>
 
     <script>
+        // Text length limits
+        const MAX_RESUME_LENGTH = 20000; // ~3-4 pages
+        const MAX_JOB_POSTING_LENGTH = 10000; // ~2 pages
+        
         let currentAnalysis = null;
         let currentResumeText = '';
         let currentJobPostingText = '';
         let inputModes = { resume: 'file', job: 'file' };
+        let urlInputTimeout = null;
 
         function showUpload() {
             document.getElementById('uploadSection').style.display = 'block';
@@ -1113,27 +1312,93 @@
             document.getElementById('toolsList').style.display = 'none';
         }
 
+        function updateTextCount(type) {
+            const textInput = document.getElementById(`${type}TextInput`);
+            const countDiv = document.getElementById(`${type}TextCount`);
+            const errorDiv = document.getElementById(`${type}TextError`);
+            
+            if (!textInput || !countDiv) return;
+            
+            if (textInput.style.display !== 'none') {
+                const length = textInput.value.length;
+                const maxLength = type === 'resume' ? MAX_RESUME_LENGTH : MAX_JOB_POSTING_LENGTH;
+                const remaining = maxLength - length;
+                
+                countDiv.style.display = 'block';
+                countDiv.textContent = `${length.toLocaleString()} / ${maxLength.toLocaleString()} characters`;
+                
+                if (length > maxLength * 0.9) {
+                    countDiv.style.color = remaining < 0 ? '#dc2626' : '#f59e0b';
+                } else {
+                    countDiv.style.color = '#666';
+                }
+                
+                // Show error if over limit
+                if (length > maxLength) {
+                    if (errorDiv) {
+                        errorDiv.style.display = 'block';
+                        errorDiv.textContent = `Text is too long. Maximum ${maxLength.toLocaleString()} characters allowed. Please shorten your text.`;
+                    }
+                } else {
+                    if (errorDiv) {
+                        errorDiv.style.display = 'none';
+                    }
+                }
+            } else {
+                countDiv.style.display = 'none';
+                if (errorDiv) errorDiv.style.display = 'none';
+            }
+        }
+
         function toggleInputMode(type, mode) {
             inputModes[type] = mode;
             const fileInput = document.getElementById(`${type}FileInput`);
             const textInput = document.getElementById(`${type}TextInput`);
+            const urlInput = document.getElementById(`${type}UrlInput`);
+            const urlStatus = document.getElementById(`${type}UrlStatus`);
             const fileBtn = document.getElementById(`${type}FileBtn`);
             const textBtn = document.getElementById(`${type}TextBtn`);
+            const urlBtn = document.getElementById(`${type}UrlBtn`);
             const container = fileInput.closest('div');
             const uploadArea = container.querySelector('.upload-area');
 
+            // Hide all inputs first
+            if (fileInput) fileInput.style.display = 'none';
+            if (textInput) textInput.style.display = 'none';
+            if (urlInput) urlInput.style.display = 'none';
+            if (urlStatus) urlStatus.style.display = 'none';
+            
+            // Remove active class from all buttons
+            if (fileBtn) fileBtn.classList.remove('active');
+            if (textBtn) textBtn.classList.remove('active');
+            if (urlBtn) urlBtn.classList.remove('active');
+
             if (mode === 'file') {
-                fileInput.style.display = 'block';
-                textInput.style.display = 'none';
+                if (fileInput) fileInput.style.display = 'block';
                 if (uploadArea) uploadArea.style.display = 'block';
-                fileBtn.classList.add('active');
-                textBtn.classList.remove('active');
-            } else {
-                fileInput.style.display = 'none';
-                textInput.style.display = 'block';
+                if (fileBtn) fileBtn.classList.add('active');
+                // Hide text count and error
+                const countDiv = document.getElementById(`${type}TextCount`);
+                const errorDiv = document.getElementById(`${type}TextError`);
+                if (countDiv) countDiv.style.display = 'none';
+                if (errorDiv) errorDiv.style.display = 'none';
+            } else if (mode === 'url' && type === 'job') {
+                // URL mode only for job posting
+                if (urlInput) urlInput.style.display = 'block';
                 if (uploadArea) uploadArea.style.display = 'none';
-                fileBtn.classList.remove('active');
-                textBtn.classList.add('active');
+                if (urlBtn) urlBtn.classList.add('active');
+                // Hide text count and error
+                const countDiv = document.getElementById(`${type}TextCount`);
+                const errorDiv = document.getElementById(`${type}TextError`);
+                if (countDiv) countDiv.style.display = 'none';
+                if (errorDiv) errorDiv.style.display = 'none';
+            } else {
+                // Text mode
+                if (textInput) textInput.style.display = 'block';
+                if (uploadArea) uploadArea.style.display = 'none';
+                if (textBtn) textBtn.classList.add('active');
+                // Show character count
+                updateTextCount(type);
             }
             
             // Check if inputs are ready after mode change
@@ -1167,12 +1432,217 @@
 
         function getInputValue(type) {
             if (inputModes[type] === 'text') {
-                return document.getElementById(`${type}TextInput`).value.trim();
+                const textInput = document.getElementById(`${type}TextInput`);
+                return textInput ? textInput.value.trim() : '';
+            } else if (inputModes[type] === 'url' && type === 'job') {
+                const urlInput = document.getElementById(`${type}UrlInput`);
+                return urlInput ? urlInput.value.trim() : '';
             } else {
                 const fileInput = document.getElementById(`${type}FileInput`);
                 // Check for drag-and-drop file stored on the element
-                return fileInput.files[0] || fileInput._droppedFile || null;
+                return fileInput ? (fileInput.files[0] || fileInput._droppedFile || null) : null;
             }
+        }
+
+        async function fetchUrlContent(url) {
+            try {
+                const urlStatus = document.getElementById('jobUrlStatus');
+                if (urlStatus) {
+                    urlStatus.style.display = 'block';
+                    urlStatus.style.background = '#fef3c7';
+                    urlStatus.style.color = '#92400e';
+                    urlStatus.textContent = 'Fetching job posting from URL...';
+                }
+
+                // Use a CORS proxy or backend endpoint to fetch the URL
+                // Since we can't directly fetch from client due to CORS, we'll use the backend
+                const response = await fetch('/api/fetch-url', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url: url })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({ error: 'Failed to fetch URL content' }));
+                    
+                    // Handle specific error types with helpful messages
+                    if (errorData.error === 'ACCESS_REQUIRED' && errorData.message) {
+                        throw new Error('ACCESS_REQUIRED:' + errorData.message);
+                    }
+                    if (errorData.error === 'NOT_FOUND' && errorData.message) {
+                        throw new Error('NOT_FOUND:' + errorData.message);
+                    }
+                    
+                    throw new Error(errorData.error || errorData.message || 'Failed to fetch URL content');
+                }
+
+                const data = await response.json();
+                
+                if (urlStatus) {
+                    urlStatus.style.background = '#d1fae5';
+                    urlStatus.style.color = '#065f46';
+                    urlStatus.textContent = '✓ Successfully fetched job posting content';
+                }
+                
+                return data.content;
+            } catch (error) {
+                const urlStatus = document.getElementById('jobUrlStatus');
+                if (urlStatus) {
+                    urlStatus.style.display = 'block';
+                    urlStatus.style.background = '#fee2e2';
+                    urlStatus.style.color = '#991b1b';
+                    
+                    let errorMsg = error.message;
+                    let showSuggestions = false;
+                    
+                    // Handle specific error types
+                    if (errorMsg.startsWith('ACCESS_REQUIRED:')) {
+                        errorMsg = errorMsg.replace('ACCESS_REQUIRED:', '');
+                        showSuggestions = true;
+                    } else if (errorMsg.startsWith('NOT_FOUND:')) {
+                        errorMsg = errorMsg.replace('NOT_FOUND:', '');
+                    } else if (errorMsg.includes('Could not extract meaningful content')) {
+                        errorMsg = 'This website uses JavaScript to load content. Please choose a different upload method instead. (e.g. "Paste Text" or "Upload")';
+                    }
+                    
+                    // Create a more detailed error display with suggestions
+                    if (showSuggestions) {
+                        urlStatus.innerHTML = `
+                            <div style="margin-bottom: 8px; font-weight: 600;">⚠️ This URL requires login or special access</div>
+                            <div style="font-size: 11px; line-height: 1.5;">
+                                <strong>Try one of these alternatives:</strong><br>
+                                1. Copy the job description text and use "Paste Text"<br>
+                                2. Save the page as a PDF and use "Upload"
+                            </div>
+                        `;
+                    } else {
+                        urlStatus.textContent = '✗ ' + errorMsg;
+                    }
+                }
+                console.error('Error fetching URL:', error);
+                throw error;
+            }
+        }
+
+        function detectContentType(text) {
+            if (!text || typeof text !== 'string') return 'unknown';
+            
+            const lowerText = text.toLowerCase();
+            
+            // Strong resume indicators (more specific, less likely in job postings)
+            const strongResumeIndicators = [
+                /\b(resume|cv|curriculum vitae)\b/i,
+                /^\s*[A-Z][a-z]+\s+[A-Z][a-z]+/m, // Name pattern at start (e.g., "John Doe")
+                /\b(objective|summary|profile)\s*:?\s*$/im, // Resume sections
+                /\b(references\s*(available|upon\s*request)|references\s*:)/i,
+                /\b(professional\s*summary|executive\s*summary)/i,
+                /\b(work\s*experience|employment\s*history|professional\s*experience)\s*:?/i,
+                /\b(phone|email|address|contact)\s*:?\s*[^\n]{5,}/i, // Contact info with actual content
+            ];
+            
+            // Moderate resume indicators (can appear in both, but more common in resumes)
+            const moderateResumeIndicators = [
+                /\b(certifications|awards|honors|publications)\s*:?/i,
+                /\b(education\s*background|academic\s*background)/i,
+                /\b(technical\s*skills|core\s*competencies)\s*:?/i,
+            ];
+            
+            // Strong job posting indicators (very specific to job postings)
+            const strongJobIndicators = [
+                /\b(job\s*(posting|description|ad|listing|opening)|position\s*description|role\s*description)\b/i,
+                /\b(we\s*are\s*(looking|seeking|hiring|recruiting)|we\s*have\s*an?\s*opening)/i,
+                /\b(apply\s*(now|today|online)|submit\s*your\s*(application|resume)|send\s*resume)/i,
+                /\b(qualifications?\s*(required|needed)|requirements?\s*(for|of))/i,
+                /\b(responsibilities?\s*(include|are)|key\s*duties|essential\s*functions)/i,
+                /\b(salary\s*(range|package)|compensation\s*package|competitive\s*salary)/i,
+                /\b(benefits\s*(package|include|offered)|employee\s*benefits)/i,
+                /\b(about\s*(the\s*company|us)|company\s*overview|who\s*we\s*are)/i,
+                /\b(job\s*title|position\s*title|role\s*title)\s*:?/i,
+                /\b(reporting\s*to|manager|supervisor)/i,
+                /\b(team|department|division)/i,
+                /\b(immediate\s*start|start\s*date|available\s*immediately)/i,
+                /\b(remote|hybrid|onsite|work\s*from\s*home)/i,
+                /\b(hourly\s*rate|per\s*hour|\$\s*\d+|\d+\s*per\s*hour)/i,
+            ];
+            
+            // Moderate job posting indicators
+            const moderateJobIndicators = [
+                /\b(location\s*:?\s*[^\n]+|work\s*location|office\s*location)/i,
+                /\b(employment\s*type|job\s*type|full\s*time|part\s*time|contract)/i,
+                /\b(equal\s*opportunity|eoe|diversity|inclusion)/i,
+                /\b(must\s*have|required\s*skills|preferred\s*qualifications)/i,
+                /\b(years?\s*of\s*experience|minimum\s*experience)/i,
+                /\b(bachelor|master|phd|degree)\s*(required|preferred)/i,
+                /\b(candidate|applicant|we\s*want|looking\s*for)/i,
+                /\b(join\s*our|become\s*part|work\s*with\s*us)/i,
+            ];
+            
+            let resumeScore = 0;
+            let jobScore = 0;
+            
+            // Strong indicators count more
+            strongResumeIndicators.forEach(pattern => {
+                if (pattern.test(text)) resumeScore += 2;
+            });
+            
+            moderateResumeIndicators.forEach(pattern => {
+                if (pattern.test(text)) resumeScore += 1;
+            });
+            
+            strongJobIndicators.forEach(pattern => {
+                if (pattern.test(text)) jobScore += 2;
+            });
+            
+            moderateJobIndicators.forEach(pattern => {
+                if (pattern.test(text)) jobScore += 1;
+            });
+            
+            // Require a clear winner with minimum threshold
+            // Lower threshold to 1 for job postings since they can be more varied
+            if (resumeScore > jobScore && resumeScore >= 2) return 'resume';
+            if (jobScore > resumeScore && jobScore >= 1) return 'job'; // Lower threshold for job detection
+            // If scores are equal or both low, check if one is clearly higher
+            if (jobScore >= 1 && jobScore > resumeScore) return 'job';
+            if (resumeScore >= 2 && resumeScore > jobScore) return 'resume';
+            return 'unknown';
+        }
+
+        function showFieldError(type, message) {
+            // Show error in the appropriate field based on current input mode
+            const textError = document.getElementById(`${type}TextError`);
+            const fileError = document.getElementById(`${type}FileError`);
+            const currentMode = inputModes[type];
+            
+            // Only show error in the div that matches the current input mode
+            if (currentMode === 'text' && textError) {
+                // Hide file error, show text error
+                if (fileError) fileError.style.display = 'none';
+                textError.style.display = 'block';
+                textError.textContent = message;
+            } else if (fileError) {
+                // Hide text error, show file error
+                if (textError) textError.style.display = 'none';
+                fileError.style.display = 'block';
+                fileError.textContent = message;
+            } else {
+                // Fallback: show in both if mode is unclear
+                if (textError) {
+                    textError.style.display = 'block';
+                    textError.textContent = message;
+                }
+                if (fileError) {
+                    fileError.style.display = 'block';
+                    fileError.textContent = message;
+                }
+            }
+        }
+
+        function clearFieldError(type) {
+            const textError = document.getElementById(`${type}TextError`);
+            const fileError = document.getElementById(`${type}FileError`);
+            
+            if (textError) textError.style.display = 'none';
+            if (fileError) fileError.style.display = 'none';
         }
 
         function checkInputsReady() {
@@ -1180,11 +1650,69 @@
             const jobInput = getInputValue('job');
             const analyzeBtn = document.getElementById('analyzeBtn');
             
-            // Check if both inputs are valid (not null, not undefined, and not empty strings)
-            const resumeValid = resumeInput !== null && resumeInput !== undefined && 
+            // Check resume field independently
+            let resumeValid = resumeInput !== null && resumeInput !== undefined && 
                                (resumeInput instanceof File || (typeof resumeInput === 'string' && resumeInput.trim().length > 0));
-            const jobValid = jobInput !== null && jobInput !== undefined && 
+            let resumeHasError = false;
+            
+            clearFieldError('resume');
+            
+            // Check resume text length if it's text
+            if (inputModes.resume === 'text' && typeof resumeInput === 'string') {
+                if (resumeInput.length > MAX_RESUME_LENGTH) {
+                    resumeValid = false;
+                } else if (resumeInput.trim().length > 0) {
+                    // Check if resume field contains job posting content
+                    const contentType = detectContentType(resumeInput);
+                    if (contentType === 'job') {
+                        resumeValid = false;
+                        resumeHasError = true;
+                        showFieldError('resume', '⚠️ This looks like a job posting, not a resume. Please paste your resume in this field.');
+                    }
+                }
+            }
+            
+            // Check job posting field independently
+            let jobValid = false;
+            let jobHasError = false;
+            
+            clearFieldError('job');
+            
+            if (inputModes.job === 'url') {
+                // Simple URL validation - just check if it looks like a URL (more lenient)
+                const trimmedUrl = jobInput && typeof jobInput === 'string' ? jobInput.trim() : '';
+                // Basic check: has some text and contains a dot or starts with http
+                jobValid = trimmedUrl.length > 0 && (trimmedUrl.includes('.') || trimmedUrl.startsWith('http'));
+            } else if (inputModes.job === 'text') {
+                jobValid = jobInput !== null && jobInput !== undefined && 
                            (jobInput instanceof File || (typeof jobInput === 'string' && jobInput.trim().length > 0));
+                // Check job text length
+                if (typeof jobInput === 'string') {
+                    if (jobInput.length > MAX_JOB_POSTING_LENGTH) {
+                        jobValid = false;
+                    } else if (jobInput.trim().length > 0) {
+                        // Check if job posting field contains resume content
+                        const contentType = detectContentType(jobInput);
+                        if (contentType === 'resume') {
+                            jobValid = false;
+                            jobHasError = true;
+                            showFieldError('job', '⚠️ This looks like a resume, not a job posting. Please paste the job description in this field.');
+                        }
+                    }
+                }
+            } else {
+                jobValid = jobInput !== null && jobInput !== undefined && 
+                          (jobInput instanceof File || (typeof jobInput === 'string' && jobInput.trim().length > 0));
+            }
+            
+            // Show errors in both fields if both are wrong
+            if (resumeHasError && jobHasError) {
+                // Both fields have swapped content - errors already shown above
+            } else if (resumeHasError && !jobHasError) {
+                // Only resume field is wrong - error already shown
+            } else if (!resumeHasError && jobHasError) {
+                // Only job field is wrong - error already shown
+            }
             
             if (resumeValid && jobValid) {
                 analyzeBtn.classList.add('ready');
@@ -1215,10 +1743,14 @@
                     alert('Please paste your resume text. The text cannot be empty.');
                     return;
                 }
+                if (resumeInput.length > MAX_RESUME_LENGTH) {
+                    alert(`Your resume text is too long. Maximum ${MAX_RESUME_LENGTH.toLocaleString()} characters allowed. Your text has ${resumeInput.length.toLocaleString()} characters. Please shorten your text and try again.`);
+                    return;
+                }
             }
 
             if (jobInput === null || jobInput === undefined) {
-                alert('Please upload a job posting file or paste the job description.');
+                alert('Please upload a job posting file, paste the job description, or paste a URL.');
                 return;
             }
 
@@ -1227,11 +1759,49 @@
                     alert('Please upload a valid job posting file (PDF, DOC, or DOCX).');
                     return;
                 }
+            } else if (inputModes.job === 'url') {
+                if (typeof jobInput !== 'string' || jobInput.trim().length === 0) {
+                    alert('Please paste a valid job posting URL.');
+                    return;
+                }
             } else {
                 if (typeof jobInput !== 'string' || jobInput.trim().length === 0) {
                     alert('Please paste the job description. The text cannot be empty.');
                     return;
                 }
+                if (jobInput.length > MAX_JOB_POSTING_LENGTH) {
+                    alert(`Your job posting text is too long. Maximum ${MAX_JOB_POSTING_LENGTH.toLocaleString()} characters allowed. Your text has ${jobInput.length.toLocaleString()} characters. Please shorten your text and try again.`);
+                    return;
+                }
+            }
+            
+            // Check both fields for swapped content AFTER basic validation passes
+            let hasResumeError = false;
+            let hasJobError = false;
+            
+            // Check resume field for swapped content (both file and text)
+            if (inputModes.resume === 'text' && typeof resumeInput === 'string' && resumeInput.trim().length > 0) {
+                const resumeContentType = detectContentType(resumeInput);
+                if (resumeContentType === 'job') {
+                    hasResumeError = true;
+                    showFieldError('resume', '⚠️ This looks like a job posting, not a resume. Please paste your resume in this field.');
+                }
+            }
+            // Note: File uploads will be checked on the server side
+            
+            // Check job posting field for swapped content (both file and text)
+            if (inputModes.job === 'text' && typeof jobInput === 'string' && jobInput.trim().length > 0) {
+                const jobContentType = detectContentType(jobInput);
+                if (jobContentType === 'resume') {
+                    hasJobError = true;
+                    showFieldError('job', '⚠️ This looks like a resume, not a job posting. Please paste the job description in this field.');
+                }
+            }
+            // Note: File uploads will be checked on the server side
+            
+            // If either field has swapped content, don't proceed
+            if (hasResumeError || hasJobError) {
+                return;
             }
 
             // Disable button during analysis
@@ -1243,6 +1813,31 @@
             document.getElementById('resultsSection').style.display = 'none';
             document.getElementById('resumeDisplay').style.display = 'none';
             document.getElementById('loadingSection').style.display = 'block';
+            
+            let jobPostingText = '';
+
+            try {
+                // If job input is a URL, fetch the content first
+                if (inputModes.job === 'url') {
+                    document.getElementById('loadingSection').querySelector('div:last-child').textContent = 'Fetching job posting from URL...';
+                    try {
+                        jobPostingText = await fetchUrlContent(jobInput.trim());
+                        if (!jobPostingText || jobPostingText.trim().length < 50) {
+                            // Error already shown inline, just return without analyzing
+                            analyzeBtn.disabled = false;
+                            document.getElementById('uploadSection').style.display = 'block';
+                            document.getElementById('loadingSection').style.display = 'none';
+                            return;
+                        }
+                    } catch (urlError) {
+                        // Error already displayed inline in fetchUrlContent, just return
+                        analyzeBtn.disabled = false;
+                        document.getElementById('uploadSection').style.display = 'block';
+                        document.getElementById('loadingSection').style.display = 'none';
+                        return;
+                    }
+                }
+
             document.getElementById('loadingSection').querySelector('div:last-child').textContent = 'Analyzing your resume against the job posting...';
 
             const formData = new FormData();
@@ -1264,6 +1859,9 @@
             // Add job posting - validation ensures jobInput is valid at this point
             if (inputModes.job === 'file' && jobInput instanceof File) {
                 formData.append('jobPosting', jobInput);
+                } else if (inputModes.job === 'url' && jobPostingText) {
+                    // Use fetched URL content
+                    formData.append('jobPostingText', jobPostingText);
             } else if (typeof jobInput === 'string' && jobInput.trim().length > 0) {
                 formData.append('jobPostingText', jobInput);
             } else {
@@ -1275,7 +1873,6 @@
                 return;
             }
 
-            try {
                 const response = await fetch('/api/analyze', {
                     method: 'POST',
                     body: formData
@@ -1283,6 +1880,10 @@
 
                 if (!response.ok) {
                     const error = await response.json();
+                    // Handle swapped content error
+                    if (error.error === 'SWAPPED_CONTENT') {
+                        throw new Error('SWAPPED_CONTENT:' + (error.message || 'Content appears to be in the wrong field.'));
+                    }
                     throw new Error(error.error || 'Failed to analyze resume');
                 }
 
@@ -1295,7 +1896,70 @@
                 // Update resume counter after successful analysis
                 loadResumeCount();
             } catch (error) {
+                // Don't show alert for URL fetch errors - they're already shown inline
+                const isUrlError = inputModes.job === 'url' && (
+                    error.message.includes('URL') || 
+                    error.message.includes('fetch') || 
+                    error.message.includes('extract') ||
+                    error.message.includes('ACCESS_REQUIRED') ||
+                    error.message.includes('NOT_FOUND')
+                );
+                
+                // Handle swapped content error - show inline instead of alert
+                if (error.message.startsWith('SWAPPED_CONTENT:')) {
+                    const errorMsg = error.message.replace('SWAPPED_CONTENT:', '');
+                    // Determine which field has the issue based on server message
+                    // Server messages:
+                    // - "The content in "Your Resume" field appears to be a job posting..."
+                    // - "The content in "Job Posting" field appears to be a resume..."
+                    
+                    console.log('SWAPPED_CONTENT error:', errorMsg);
+                    
+                    const lowerMsg = errorMsg.toLowerCase();
+                    let targetField = null;
+                    
+                    // Explicit detection based on server message structure
+                    // Pattern 1: "Your Resume" field + "job posting" = resume field has job content → show error in resume
+                    if (lowerMsg.includes('your resume') && lowerMsg.includes('job posting')) {
+                        targetField = 'resume';
+                        console.log('Detected: Resume field has job posting content');
+                    }
+                    // Pattern 2: "Job Posting" field + "resume" = job field has resume content → show error in job
+                    else if (lowerMsg.includes('job posting') && lowerMsg.includes('resume') && !lowerMsg.includes('your resume')) {
+                        targetField = 'job';
+                        console.log('Detected: Job field has resume content');
+                    }
+                    // Pattern 3: Just "Your Resume" mentioned → error in resume field
+                    else if (lowerMsg.includes('your resume')) {
+                        targetField = 'resume';
+                        console.log('Detected: Error in resume field (pattern 3)');
+                    }
+                    // Pattern 4: Just "Job Posting" mentioned → error in job field
+                    else if (lowerMsg.includes('job posting')) {
+                        targetField = 'job';
+                        console.log('Detected: Error in job field (pattern 4)');
+                    }
+                    
+                    if (targetField) {
+                        // Clean up the message to remove field name references
+                        const cleanMsg = errorMsg
+                            .replace(/["']Your Resume["'] field/gi, 'this field')
+                            .replace(/["']Your Resume["']/gi, 'this field')
+                            .replace(/["']Job Posting["'] field/gi, 'this field')
+                            .replace(/["']Job Posting["']/gi, 'this field');
+                        showFieldError(targetField, '⚠️ ' + cleanMsg);
+                    } else {
+                        // Fallback: show in both fields if we can't determine
+                        showFieldError('resume', '⚠️ ' + errorMsg);
+                        showFieldError('job', '⚠️ ' + errorMsg);
+                    }
+                    showUpload();
+                    return;
+                }
+                
+                if (!isUrlError) {
                 alert('Error: ' + error.message);
+                }
                 showUpload();
             } finally {
                 // Re-enable button
@@ -1445,8 +2109,25 @@
         function displayResume(text) {
             const resumeContent = document.getElementById('resumeContent');
             
+            if (!text || text.trim().length === 0) {
+                resumeContent.innerHTML = '<div style="color: #666; font-style: italic;">No resume content to display.</div>';
+                return;
+            }
+            
+            // Check if this is actually resume content (not job posting)
+            const contentType = detectContentType(text);
+            if (contentType === 'job') {
+                resumeContent.innerHTML = '<div style="color: #dc2626; padding: 16px; background: #fee2e2; border-radius: 8px;">⚠️ Warning: This appears to be job posting content, not a resume. Please check your inputs.</div>';
+                return;
+            }
+            
             // Simple parsing - in production, use a more sophisticated parser
             const lines = text.split('\n').filter(line => line.trim());
+            
+            if (lines.length === 0) {
+                resumeContent.innerHTML = `<div style="white-space: pre-wrap; font-size: 12px; line-height: 1.6;">${text}</div>`;
+                return;
+            }
             
             let html = '';
             let currentSection = '';
@@ -1969,7 +2650,7 @@
                     <div style="line-height: 1.8; font-size: 15px; color: #333;">
                         <div style="margin-bottom: 24px;">
                             <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 12px; color: #2563eb;">1. Upload Your Resume & Job Posting</h3>
-                            <p style="color: #666; margin-bottom: 8px;">Upload your resume (PDF, DOC, or paste text) and the job posting you're applying for. Our AI will analyze both documents to understand the requirements.</p>
+                            <p style="color: #666; margin-bottom: 8px;">Upload your resume (PDF, DOC, or paste text) and the job posting you're applying for. For job postings, you can upload a file, paste the text, or paste a URL from job boards like LinkedIn, Indeed, etc. Our AI will analyze both documents to understand the requirements.</p>
                         </div>
                         <div style="margin-bottom: 24px;">
                             <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 12px; color: #2563eb;">2. Get Your Score</h3>
@@ -2015,9 +2696,45 @@
 
         // Setup drag and drop and input listeners
         document.addEventListener('DOMContentLoaded', () => {
-            // Add event listeners for text inputs
-            document.getElementById('resumeTextInput').addEventListener('input', checkInputsReady);
-            document.getElementById('jobTextInput').addEventListener('input', checkInputsReady);
+            // Add event listeners for text inputs with character count updates
+            const resumeTextInput = document.getElementById('resumeTextInput');
+            const jobTextInput = document.getElementById('jobTextInput');
+            
+            if (resumeTextInput) {
+                resumeTextInput.addEventListener('input', () => {
+                    updateTextCount('resume');
+                    checkInputsReady();
+                });
+            }
+            
+            if (jobTextInput) {
+                jobTextInput.addEventListener('input', () => {
+                    updateTextCount('job');
+                    checkInputsReady();
+                });
+            }
+            
+            // Add event listener for URL input with debouncing
+            const jobUrlInput = document.getElementById('jobUrlInput');
+            if (jobUrlInput) {
+                jobUrlInput.addEventListener('input', () => {
+                    // Clear previous timeout
+                    if (urlInputTimeout) {
+                        clearTimeout(urlInputTimeout);
+                    }
+                    // Debounce: wait 300ms after user stops typing
+                    urlInputTimeout = setTimeout(() => {
+                        checkInputsReady();
+                    }, 300);
+                });
+                // Also check on blur (when user clicks away)
+                jobUrlInput.addEventListener('blur', () => {
+                    if (urlInputTimeout) {
+                        clearTimeout(urlInputTimeout);
+                    }
+                    checkInputsReady();
+                });
+            }
             
             // Add event listeners for file inputs
             document.getElementById('resumeFileInput').addEventListener('change', (e) => {
@@ -2031,8 +2748,10 @@
                 checkInputsReady();
             });
             
-            // Initial check
+            // Initial check and update character counts
             checkInputsReady();
+            updateTextCount('resume');
+            updateTextCount('job');
             
             const uploadAreas = document.querySelectorAll('.upload-area');
             

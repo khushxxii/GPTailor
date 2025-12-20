@@ -239,12 +239,192 @@ app.post('/api/analyze', upload, async (req, res) => {
       return res.status(400).json({ error: 'No job posting provided. Please upload a file or provide text.' });
     }
 
+    // Text length limits
+    const MAX_RESUME_LENGTH = 20000; // ~3-4 pages
+    const MAX_JOB_POSTING_LENGTH = 10000; // ~2 pages
+
     if (!resumeText || resumeText.trim().length < 50) {
-      return res.status(400).json({ error: 'Resume text is too short. Please provide a valid resume.' });
+      return res.status(400).json({ error: 'Resume text is too short. Please provide a valid resume (minimum 50 characters).' });
+    }
+
+    if (resumeText.length > MAX_RESUME_LENGTH) {
+      return res.status(400).json({ 
+        error: `Resume text is too long. Maximum ${MAX_RESUME_LENGTH.toLocaleString()} characters allowed. Your text has ${resumeText.length.toLocaleString()} characters. Please shorten your text and try again.` 
+      });
     }
 
     if (!jobPostingText || jobPostingText.trim().length < 50) {
-      return res.status(400).json({ error: 'Job posting text is too short. Please provide a valid job description.' });
+      return res.status(400).json({ error: 'Job posting text is too short. Please provide a valid job description (minimum 50 characters).' });
+    }
+
+    if (jobPostingText.length > MAX_JOB_POSTING_LENGTH) {
+      return res.status(400).json({ 
+        error: `Job posting text is too long. Maximum ${MAX_JOB_POSTING_LENGTH.toLocaleString()} characters allowed. Your text has ${jobPostingText.length.toLocaleString()} characters. Please shorten your text and try again.` 
+      });
+    }
+
+    // Detect if content is swapped (resume in job posting field or vice versa)
+    function detectContentType(text) {
+      if (!text || typeof text !== 'string') return 'unknown';
+      
+      const lowerText = text.toLowerCase();
+      
+      // Strong resume indicators (more specific, less likely in job postings)
+      const strongResumeIndicators = [
+        /\b(resume|cv|curriculum vitae)\b/i,
+        /^\s*[A-Z][a-z]+\s+[A-Z][a-z]+/m, // Name pattern at start (e.g., "John Doe")
+        /\b(objective|summary|profile)\s*:?\s*$/im, // Resume sections
+        /\b(references\s*(available|upon\s*request)|references\s*:)/i,
+        /\b(professional\s*summary|executive\s*summary)/i,
+        /\b(work\s*experience|employment\s*history|professional\s*experience)\s*:?/i,
+        /\b(phone|email|address|contact)\s*:?\s*[^\n]{5,}/i, // Contact info with actual content
+      ];
+      
+      // Moderate resume indicators (can appear in both, but more common in resumes)
+      const moderateResumeIndicators = [
+        /\b(certifications|awards|honors|publications)\s*:?/i,
+        /\b(education\s*background|academic\s*background)/i,
+        /\b(technical\s*skills|core\s*competencies)\s*:?/i,
+      ];
+      
+      // Strong job posting indicators (very specific to job postings)
+      const strongJobIndicators = [
+        /\b(job\s*(posting|description|ad|listing|opening)|position\s*description|role\s*description)\b/i,
+        /\b(we\s*are\s*(looking|seeking|hiring|recruiting)|we\s*have\s*an?\s*opening)/i,
+        /\b(apply\s*(now|today|online)|submit\s*your\s*(application|resume)|send\s*resume)/i,
+        /\b(qualifications?\s*(required|needed)|requirements?\s*(for|of))/i,
+        /\b(responsibilities?\s*(include|are)|key\s*duties|essential\s*functions)/i,
+        /\b(salary\s*(range|package)|compensation\s*package|competitive\s*salary)/i,
+        /\b(benefits\s*(package|include|offered)|employee\s*benefits)/i,
+        /\b(about\s*(the\s*company|us)|company\s*overview|who\s*we\s*are)/i,
+        /\b(job\s*title|position\s*title|role\s*title)\s*:?/i,
+        /\b(reporting\s*to|manager|supervisor)/i,
+        /\b(team|department|division)/i,
+        /\b(immediate\s*start|start\s*date|available\s*immediately)/i,
+        /\b(remote|hybrid|onsite|work\s*from\s*home)/i,
+        /\b(hourly\s*rate|per\s*hour|\$\s*\d+|\d+\s*per\s*hour)/i,
+      ];
+      
+      // Moderate job posting indicators
+      const moderateJobIndicators = [
+        /\b(location\s*:?\s*[^\n]+|work\s*location|office\s*location)/i,
+        /\b(employment\s*type|job\s*type|full\s*time|part\s*time|contract)/i,
+        /\b(equal\s*opportunity|eoe|diversity|inclusion)/i,
+        /\b(must\s*have|required\s*skills|preferred\s*qualifications)/i,
+        /\b(years?\s*of\s*experience|minimum\s*experience)/i,
+        /\b(bachelor|master|phd|degree)\s*(required|preferred)/i,
+        /\b(candidate|applicant|we\s*want|looking\s*for)/i,
+        /\b(join\s*our|become\s*part|work\s*with\s*us)/i,
+      ];
+      
+      let resumeScore = 0;
+      let jobScore = 0;
+      
+      // Strong indicators count more
+      strongResumeIndicators.forEach(pattern => {
+        if (pattern.test(text)) resumeScore += 2;
+      });
+      
+      moderateResumeIndicators.forEach(pattern => {
+        if (pattern.test(text)) resumeScore += 1;
+      });
+      
+      strongJobIndicators.forEach(pattern => {
+        if (pattern.test(text)) jobScore += 2;
+      });
+      
+      moderateJobIndicators.forEach(pattern => {
+        if (pattern.test(text)) jobScore += 1;
+      });
+      
+      // Require a clear winner with minimum threshold
+      // Lower threshold to 1 for job postings since they can be more varied
+      if (resumeScore > jobScore && resumeScore >= 2) return 'resume';
+      if (jobScore > resumeScore && jobScore >= 1) return 'job'; // Lower threshold for job detection
+      // If scores are equal or both low, check if one is clearly higher
+      if (jobScore >= 1 && jobScore > resumeScore) return 'job';
+      if (resumeScore >= 2 && resumeScore > jobScore) return 'resume';
+      
+      // If we have ANY job indicators but no strong resume indicators, likely a job posting
+      if (jobScore >= 1 && resumeScore < 2) return 'job';
+      // If we have strong resume indicators, it's a resume
+      if (resumeScore >= 2) return 'resume';
+      
+      return 'unknown';
+    }
+
+    // Check for swapped content
+    const resumeContentType = detectContentType(resumeText);
+    const jobContentType = detectContentType(jobPostingText);
+    
+    // Debug logging
+    console.log('Content type detection:', {
+      resume: resumeContentType,
+      job: jobContentType,
+      resumeLength: resumeText.length,
+      jobLength: jobPostingText.length,
+      resumePreview: resumeText.substring(0, 200),
+      jobPreview: jobPostingText.substring(0, 200)
+    });
+    
+    // Check if resume field has job posting content
+    if (resumeContentType === 'job') {
+      // If job field also has job content, both are wrong - prioritize resume field error
+      if (jobContentType === 'job') {
+        return res.status(400).json({ 
+          error: 'SWAPPED_CONTENT',
+          message: 'The content in "Your Resume" field appears to be a job posting, not a resume. Please make sure you uploaded/pasted your resume in the correct field.'
+        });
+      }
+      return res.status(400).json({ 
+        error: 'SWAPPED_CONTENT',
+        message: 'The content in "Your Resume" field appears to be a job posting, not a resume. Please make sure you uploaded/pasted your resume in the correct field.'
+      });
+    }
+    
+    // Check if job posting field has resume content
+    if (jobContentType === 'resume') {
+      // If resume field also has resume content, both are wrong - prioritize job field error
+      if (resumeContentType === 'resume') {
+        return res.status(400).json({ 
+          error: 'SWAPPED_CONTENT',
+          message: 'The content in "Job Posting" field appears to be a resume, not a job posting. Please make sure you uploaded/pasted the job description in the correct field.'
+        });
+      }
+      return res.status(400).json({ 
+        error: 'SWAPPED_CONTENT',
+        message: 'The content in "Job Posting" field appears to be a resume, not a job posting. Please make sure you uploaded/pasted the job description in the correct field.'
+      });
+    }
+    
+    // Additional check: if both are 'unknown' but content is very similar, likely both are job postings
+    // (user uploaded same job posting in both fields)
+    if (resumeContentType === 'unknown' && jobContentType === 'unknown') {
+      // Helper function to calculate text similarity
+      function calculateSimilarity(text1, text2) {
+        if (!text1 || !text2) return 0;
+        const words1 = text1.toLowerCase().split(/\s+/);
+        const words2 = text2.toLowerCase().split(/\s+/);
+        const set1 = new Set(words1);
+        const set2 = new Set(words2);
+        const intersection = new Set([...set1].filter(x => set2.has(x)));
+        const union = new Set([...set1, ...set2]);
+        return intersection.size / union.size;
+      }
+      
+      // Check if content is very similar (likely same document)
+      const similarity = calculateSimilarity(resumeText.substring(0, 500), jobPostingText.substring(0, 500));
+      if (similarity > 0.8) {
+        // Content is very similar - check if it looks like a job posting
+        const combinedText = resumeText + ' ' + jobPostingText;
+        const combinedType = detectContentType(combinedText);
+        if (combinedType === 'job') {
+          return res.status(400).json({ 
+            error: 'SWAPPED_CONTENT',
+            message: 'The content in "Your Resume" field appears to be a job posting, not a resume. Please make sure you uploaded/pasted your resume in the correct field.'
+          });
+        }
+      }
     }
 
     // Analyze resume against job posting
@@ -263,6 +443,284 @@ app.post('/api/analyze', upload, async (req, res) => {
     console.error('Analysis error:', error);
     res.status(500).json({ 
       error: error.message || 'Failed to analyze resume. Please try again.' 
+    });
+  }
+});
+
+// Fetch content from URL
+app.post('/api/fetch-url', async (req, res) => {
+  try {
+    const { url } = req.body;
+
+    if (!url || typeof url !== 'string') {
+      return res.status(400).json({ error: 'Valid URL is required.' });
+    }
+
+    // Ensure URL has protocol
+    let fetchUrl = url.trim();
+    if (!fetchUrl.startsWith('http://') && !fetchUrl.startsWith('https://')) {
+      fetchUrl = 'https://' + fetchUrl;
+    }
+
+    // Use Node's built-in fetch (Node 18+) or fallback to http/https
+    let html;
+    
+    try {
+      // Try using global fetch (Node 18+)
+      if (typeof fetch !== 'undefined') {
+        const response = await fetch(fetchUrl, {
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+          }
+        });
+
+        if (!response.ok) {
+          // Check for authentication/access issues
+          if (response.status === 401 || response.status === 403) {
+            return res.status(400).json({ 
+              error: 'ACCESS_REQUIRED',
+              message: 'This URL requires login or special access. Please use one of these alternatives:\n\n1. Copy the job description text from the page and paste it using "Paste Text"\n2. Save the page as a PDF and upload it using "Upload"'
+            });
+          }
+          if (response.status === 404) {
+            return res.status(400).json({ 
+              error: 'NOT_FOUND',
+              message: 'This URL could not be found (404 error). Please check the URL and try again, or paste the job description text directly.'
+            });
+          }
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        html = await response.text();
+        
+        // Check if the page indicates login/access required
+        const loginIndicators = [
+          /sign\s*in|log\s*in|login|authentication|access\s*denied|unauthorized|forbidden/i,
+          /please\s*log\s*in|sign\s*in\s*to\s*continue|access\s*restricted/i
+        ];
+        
+        const lowerHtml = html.toLowerCase();
+        const hasLoginIndicator = loginIndicators.some(pattern => pattern.test(html));
+        const hasLoginForm = /<form[^>]*>.*?(?:password|username|email|login).*?<\/form>/is.test(html);
+        
+        if (hasLoginIndicator || hasLoginForm) {
+          // Check if we got meaningful content despite login indicators
+          const textCheck = html.replace(/<script[^>]*>.*?<\/script>/gis, '')
+                                .replace(/<style[^>]*>.*?<\/style>/gis, '')
+                                .replace(/<[^>]+>/g, ' ')
+                                .replace(/\s+/g, ' ')
+                                .trim();
+          
+          // If the page is mostly login-related content, it's likely inaccessible
+          if (textCheck.length < 200 || (hasLoginForm && textCheck.length < 500)) {
+            return res.status(400).json({ 
+              error: 'ACCESS_REQUIRED',
+              message: 'This URL requires login or special access. Please use one of these alternatives:\n\n1. Copy the job description text from the page and paste it using "Paste Text"\n2. Save the page as a PDF and upload it using "Upload"'
+            });
+          }
+        }
+      } else {
+        // Fallback: use Node's http/https modules
+        const https = require('https');
+        const http = require('http');
+        const { URL } = require('url');
+        
+        html = await new Promise((resolve, reject) => {
+          const urlObj = new URL(fetchUrl);
+          const client = urlObj.protocol === 'https:' ? https : http;
+          
+          const request = client.get(fetchUrl, {
+            headers: {
+              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+            },
+            timeout: 10000
+          }, (response) => {
+            // Check for authentication/access issues
+            if (response.statusCode === 401 || response.statusCode === 403) {
+              reject(new Error('ACCESS_REQUIRED'));
+              return;
+            }
+            if (response.statusCode === 404) {
+              reject(new Error('NOT_FOUND'));
+              return;
+            }
+            if (response.statusCode < 200 || response.statusCode >= 300) {
+              reject(new Error(`HTTP error! status: ${response.statusCode}`));
+              return;
+            }
+            
+            let data = '';
+            response.on('data', (chunk) => { data += chunk; });
+            response.on('end', () => {
+              // Check for login indicators in the HTML
+              const loginIndicators = [
+                /sign\s*in|log\s*in|login|authentication|access\s*denied|unauthorized|forbidden/i,
+                /please\s*log\s*in|sign\s*in\s*to\s*continue|access\s*restricted/i
+              ];
+              
+              const hasLoginIndicator = loginIndicators.some(pattern => pattern.test(data));
+              const hasLoginForm = /<form[^>]*>.*?(?:password|username|email|login).*?<\/form>/is.test(data);
+              
+              if (hasLoginIndicator || hasLoginForm) {
+                const textCheck = data.replace(/<script[^>]*>.*?<\/script>/gis, '')
+                                      .replace(/<style[^>]*>.*?<\/style>/gis, '')
+                                      .replace(/<[^>]+>/g, ' ')
+                                      .replace(/\s+/g, ' ')
+                                      .trim();
+                
+                if (textCheck.length < 200 || (hasLoginForm && textCheck.length < 500)) {
+                  reject(new Error('ACCESS_REQUIRED'));
+                  return;
+                }
+              }
+              resolve(data);
+            });
+          });
+          
+          request.on('error', (err) => reject(err));
+          request.on('timeout', () => {
+            request.destroy();
+            reject(new Error('Request timeout'));
+          });
+        });
+      }
+    } catch (fetchError) {
+      console.error('Fetch error:', fetchError);
+      
+      // Handle specific error types
+      if (fetchError.message === 'ACCESS_REQUIRED') {
+        return res.status(400).json({ 
+          error: 'ACCESS_REQUIRED',
+          message: 'This URL requires login or special access. Please use one of these alternatives:\n\n1. Copy the job description text from the page and paste it using "Paste Text"\n2. Save the page as a PDF and upload it using "Upload"'
+        });
+      }
+      
+      if (fetchError.message === 'NOT_FOUND') {
+        return res.status(400).json({ 
+          error: 'NOT_FOUND',
+          message: 'This URL could not be found (404 error). Please check the URL and try again, or paste the job description text directly.'
+        });
+      }
+      
+      throw new Error('Failed to fetch URL: ' + fetchError.message);
+    }
+    
+    // Enhanced HTML to text extraction
+    const MAX_JOB_POSTING_LENGTH = 10000; // ~2 pages
+    
+    // First, try to extract from JSON-LD structured data (common in job postings)
+    let text = '';
+    const jsonLdMatches = html.match(/<script[^>]*type=["']application\/ld\+json["'][^>]*>(.*?)<\/script>/gis);
+    if (jsonLdMatches) {
+      for (const match of jsonLdMatches) {
+        try {
+          const jsonContent = match.replace(/<script[^>]*>|<\/script>/gi, '');
+          const data = JSON.parse(jsonContent);
+          if (data['@type'] === 'JobPosting' || data.jobTitle || data.description) {
+            if (data.description) {
+              text += data.description + ' ';
+            }
+            if (data.qualifications) {
+              text += (typeof data.qualifications === 'string' ? data.qualifications : JSON.stringify(data.qualifications)) + ' ';
+            }
+            if (data.responsibilities) {
+              text += (typeof data.responsibilities === 'string' ? data.responsibilities : JSON.stringify(data.responsibilities)) + ' ';
+            }
+          }
+        } catch (e) {
+          // Ignore JSON parse errors
+        }
+      }
+    }
+    
+    // Try to extract from meta tags
+    const metaDescription = html.match(/<meta[^>]*name=["']description["'][^>]*content=["']([^"']+)["']/i);
+    if (metaDescription && metaDescription[1]) {
+      text += metaDescription[1] + ' ';
+    }
+    
+    // Try to extract from common job posting class names/IDs
+    const jobContentSelectors = [
+      /<div[^>]*class=["'][^"']*job[^"']*description[^"']*["'][^>]*>(.*?)<\/div>/gis,
+      /<div[^>]*class=["'][^"']*description[^"']*["'][^>]*>(.*?)<\/div>/gis,
+      /<div[^>]*id=["'][^"']*job[^"']*description[^"']*["'][^>]*>(.*?)<\/div>/gis,
+      /<section[^>]*class=["'][^"']*job[^"']*description[^"']*["'][^>]*>(.*?)<\/section>/gis,
+      /<article[^>]*class=["'][^"']*job[^"']*["'][^>]*>(.*?)<\/article>/gis,
+    ];
+    
+    for (const selector of jobContentSelectors) {
+      const matches = html.match(selector);
+      if (matches) {
+        for (const match of matches) {
+          const content = match.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+          if (content.length > 100) {
+            text += content + ' ';
+          }
+        }
+      }
+    }
+    
+    // If we still don't have enough text, do general extraction
+    if (text.trim().length < 100) {
+      // Remove scripts and styles first
+      let cleanHtml = html
+        .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+        .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, '')
+        .replace(/<noscript[^>]*>.*?<\/noscript>/gi, '');
+      
+      // Try to get text from main content areas
+      const mainContent = cleanHtml.match(/<main[^>]*>(.*?)<\/main>/gis) || 
+                         cleanHtml.match(/<article[^>]*>(.*?)<\/article>/gis) ||
+                         cleanHtml.match(/<div[^>]*class=["'][^"']*content[^"']*["'][^>]*>(.*?)<\/div>/gis);
+      
+      if (mainContent) {
+        for (const content of mainContent) {
+          const extracted = content.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+          if (extracted.length > 100) {
+            text += extracted + ' ';
+          }
+        }
+      }
+      
+      // Fallback to general text extraction
+      if (text.trim().length < 100) {
+        text = cleanHtml
+          .replace(/<[^>]+>/g, ' ')
+          .replace(/\s+/g, ' ')
+          .trim();
+      }
+    } else {
+      // Clean up the extracted text
+      text = text
+        .replace(/<[^>]+>/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+    }
+
+    // Final cleanup
+    text = text
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    if (text.length < 50) {
+      return res.status(400).json({ 
+        error: 'Could not extract meaningful content from this URL. This website may require JavaScript to load the job description, or the content structure is not supported. Please copy and paste the job description text directly instead.' 
+      });
+    }
+
+    // Truncate if too long and warn user
+    if (text.length > MAX_JOB_POSTING_LENGTH) {
+      text = text.substring(0, MAX_JOB_POSTING_LENGTH);
+      return res.status(400).json({ 
+        error: `The content from this URL is too long (over ${MAX_JOB_POSTING_LENGTH.toLocaleString()} characters). Please paste the job description text directly instead.` 
+      });
+    }
+
+    res.json({ content: text });
+  } catch (error) {
+    console.error('URL fetch error:', error);
+    res.status(500).json({ 
+      error: error.message || 'Failed to fetch URL content. Please try pasting the text directly.' 
     });
   }
 });
